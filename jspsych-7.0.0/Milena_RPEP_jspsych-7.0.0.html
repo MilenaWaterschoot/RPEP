@@ -26,8 +26,8 @@ var timeline = [];
 // Preloading the images
 var preload = {
     type: jsPsychPreload,
-    images: ['img/blue.png','img/orange.png', 'img/green.png', 'img/yellow.png']
-}; 
+    auto_preload: true 
+}
 
 // is the experiment running from a server or not? (this determines if data is saved on server or offline)
 if (document.location.host) { // returns your host or null
@@ -102,10 +102,10 @@ on_finish: function(data) {
 };
 
 /* defining the cards */
-yellow = "<img src='img/yellow.png'></img>";
-orange = "<img src='img/orange.png'></img>";
-green = "<img src='img/green.png'></img>";
-blue = "<img src='img/blue.png'></img>";
+yellow = 'img/yellow.png'
+orange = 'img/orange.png'
+green = 'img/green.png'
+blue = 'img/blue.png'
 
 /* initializing the text messages */
 // the instructions
