@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RPEP</title> <!-- defines a title in the browser tab -->
+  <script src="jspsych/jspsych.js"></script>
+  <script src="jspsych/plugin-html-keyboard-response.js"></script> <!--html and keyboard-->
+  <script src="jspsych/plugin-image-keyboard-response.js"></script> <!--image and keyboard-->
+  <script src="jspsych/plugin-preload.js"></script> <!-- to preload media-->
+  <script src="jspsych/plugin-survey-text.js"></script>
+  <script src="jspsych/plugin-fullscreen.js"></script>
+  <script src="jspsych/plugin-instructions.js"></script>
+  <script src="jspsych/plugin-survey-multi-choice.js"></script>
+  <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" /> <!-- the jsPsych stylesheet: some visual styles-->
+</head>
+<body></body>
+<script>
+
+/* initialization */
+
+// Initialize jsPsych and save the result to a variable called jsPsych
+var jsPsych = initJsPsych();
+
+// create timeline 
+var timeline = [];
+
+// Preloading the images
+var preload = {
+    type: jsPsychPreload,
+    images: ['img/blue.png','img/orange.png', 'img/green.png', 'img/yellow.png']
+}; 
+
+// is the experiment running from a server or not? (this determines if data is saved on server or offline)
+if (document.location.host) { // returns your host or null
+  online = true;
+} else {
+  online = false;
+};
+
+/*********** welcome message ***********/
+var welcome = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus: `
+    <p>Welcome to the experiment.</p>
+    <p>Please turn off music, cell phone and other devices that might be distracting.</p>
+    <p>Press an arrow key to begin.</p>
+    `,
+    choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+};
+
+/*********** prolific ID ***********
+var prolific = {
+type: jsPsychSurveyText,
+questions: [
+    {prompt: "Please turn off music, cell phone and other devices that might be distracting. Please enter your prolific ID below: ", required: true}],
+on_finish: function(data) {
+    var responses = JSON.parse(data.responses);
+    var prolific_ID = responses.Q0;
+    jsPsych.data.addProperties({
+    prolific_ID: prolific_ID
+    });
+}
+}; */
+
+/*********** fullscreen mode ***********/
+var fullscreen_mode = {
+type: jsPsychFullscreen,
+fullscreen_mode: true
+};
+
+// informed consent trial.
+var consent = {
+type: jsPsychInstructions,
+pages: ['<p>We need your consent to proceed.</p> '+
+    '<p> This is a research project conducted at Ghent University.</p>'+
+    '<p> In this experiment, you will play a gambling game.</p>'+
+    '<p> The data we collect during the experiment are not linked to any potentially identifying information. These data will solely be used for research purposes.</p>'+
+    '<p> Anonymized data from the study will be registered and archived at a trusted public data repository in order to make them available to other researchers in line with current data sharing practices. </p>'+ // is this also the case for me?
+    '<p> You are free to stop the experiment by closing your browser window at any time.</p>'+
+    '<p> Non-participation or withdrawal from the study will not be of any disadvantage to you.</p>'+
+    '<p> If you have any questions, you can contact Milena Waterschoot at milena.waterschoot@ugent.be or the lead researcher Charlotte Eben at charlotte.eben@ugent.be. </p>'+
+    '<p> By clicking “I agree”, you affirm that you are at least 18 years of age, which is the minimum age to participate in this study, and that you understand the nature of your participation in this research. If you do not wish to participate, please close this window.</p>'],
+show_clickable_nav: true,
+button_label_next: "I agree",
+allow_backward: false
+};
+
+// get participant's gender and add it to the datafile
+var gender = {
+type: jsPsychSurveyMultiChoice,
+questions: [{
+    prompt: "Please enter your gender",
+    required: true,
+    options: ["Male", "Female", "Non-binary", "Prefer not to say"]
+}, ],
+on_finish: function(data) {
+    var responses = JSON.parse(data.responses);
+    var code = responses.Q0;
+    jsPsych.data.addProperties({
+    gender: code
+    });
+}
+};
+
+/* defining the cards */
+yellow = "<img src='img/yellow.png'></img>";
+orange = "<img src='img/orange.png'></img>";
+green = "<img src='img/green.png'></img>";
+blue = "<img src='img/blue.png'></img>";
+
+/* initializing the text messages */
+// the instructions
+var instructions = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <br>The game you are going to play, goes as follows:</br>
+    <br>You must earn as many points as you can by choosing one of the two cards that will appear on the screen.</br>
+    <br>If you pick the right card, you will earn 5 points. However, if you pick the wrong card, you will looe 5 points.</br>
+    <br>This is a chance game. You have a 50% chance of picking the right card and a 50% chance of picking the wrong card.</br>
+    <br>You can't know which card is the right one so you must take a gamble.</br>
+    <br>Your starting amount will be 50 points.</br>
+    <br>When you want the card on the left, press "<".</br>
+    <br>When you want the card on the right, press ">".</br>
+    <br>Press any arrow key to continue.</br>
+  `,
+  choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+};
+
+// practice block message
+var practice_message = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+  <br>We will start with three practice games.</br>
+  <br>The points you win or lose in the following three games won't be added or subtracted from your starting amount.</br>
+        
+  <p>Press an arrow key when you are ready to continue.</p>
+  `,
+  choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+};
+
+// anouncement that the real experiment will start
+var real_experiment_message = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+  <br>The practice block is over.</br>
+        
+  <p>Press an arrow key to start the real game.</p>
+  `,
+  choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+};
+
+// to take a break between blocks
+var block_end = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+  <p>If you want, you can take a break.</p>
+  <p>Press an arrow key when you are ready to continue.</p>
+  `,
+  choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+};
+
+
+/* creating the different sequences */
+var practice_sequence = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'Press an arrow key to start the next gamble',
+            choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('cards'),
+            choices: ['ArrowLeft', 'ArrowRight'],
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('feedback'),         
+            choices: "NO_KEYS",
+            trial_duration: 1000
+        }
+    ],
+    timeline_variables: [
+        { cards: yellow, feedback: '+5' },
+        { cards: green, feedback: '-5' },
+        { cards: blue, feedback: '+5' }
+    ]
+    };
+
+var loss_sequence = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'Press an arrow key to start the next gamble',
+            choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('cards'),
+            choices: ['ArrowLeft', 'ArrowRight'],
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('feedback'),         
+            choices: "NO_KEYS",
+            trial_duration: 1000
+        }
+    ],
+    timeline_variables: [
+        { cards: blue, feedback: '+5' },
+        { cards: green, feedback: '-5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: blue, feedback: '-5' },
+        { cards: green, feedback: '-5' },
+        { cards: yellow, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: blue, feedback: '-5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: blue, feedback: '+5' },
+        { cards: orange, feedback: '+5' },
+        { cards: green, feedback: '-5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: green, feedback: '+5' },
+        { cards: blue, feedback: '-5' }
+    ]
+    };
+
+var random_sequence_1 = {
+    timeline: [
+    {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'Press an arrow key to start the next gamble',
+            choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('cards'),
+            choices: ['ArrowLeft', 'ArrowRight'],
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('feedback'),         
+            choices: "NO_KEYS",
+            trial_duration: 1000
+        }
+    ],
+    timeline_variables: [
+        { cards: blue, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: blue, feedback: '+5' },
+        { cards: green, feedback: '-5' },
+        { cards: orange, feedback: '-5' },
+        { cards: blue, feedback: '+5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: green, feedback: '+5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: green, feedback: '+5' },
+        { cards: green, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: blue, feedback: '+5' },
+        { cards: yellow, feedback: '-5' }
+    ]
+    };
+
+var random_sequence_2 = {
+    timeline: [
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: 'Press an arrow key to start the next gamble',
+            choices: ['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp']
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('cards'),
+            choices: ['ArrowLeft', 'ArrowRight'],
+        },
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('feedback'),         
+            choices: "NO_KEYS",
+            trial_duration: 1000
+        }
+    ],
+    timeline_variables: [
+        { cards: green, feedback: '-5' },
+        { cards: yellow, feedback: '+5' },
+        { cards: orange, feedback: '-5' },
+        { cards: orange, feedback: '+5' },
+        { cards: orange, feedback: '+5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: green, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: orange, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: yellow, feedback: '-5' },
+        { cards: orange, feedback: '+5' },
+        { cards: yellow, feedback: '+5' },
+        { cards: blue, feedback: '-5' },
+        { cards: orange, feedback: '+5' }
+    ]
+    };
+
+/* creating the timeline */
+// preload the images
+timeline.push(preload);
+// the welcome message
+timeline.push(welcome);
+// the prolific ID
+// timeline.push(prolific);
+// set to fullscreen mode
+timeline.push(fullscreen_mode);
+// show informed consent
+timeline.push(consent);
+// ask gender
+timeline.push(gender);
+// the instructions
+timeline.push(instructions);
+// practice block
+timeline.push(practice_message);
+timeline.push(practice_sequence);
+// anouncement that we will start the real game
+timeline.push(real_experiment_message);
+// block 1
+timeline.push(loss_sequence);
+timeline.push(random_sequence_1);
+timeline.push(block_end);
+// block 2
+timeline.push(loss_sequence);
+timeline.push(random_sequence_2);
+timeline.push(block_end);
+// block 3
+timeline.push(loss_sequence);
+timeline.push(random_sequence_1);
+timeline.push(block_end);
+// block 4
+timeline.push(loss_sequence);
+timeline.push(random_sequence_2);
+timeline.push(block_end);
+
+
+/* start the experiment and save data*/
+jsPsych.run(timeline);   
+
+</script>
+
+</html>
