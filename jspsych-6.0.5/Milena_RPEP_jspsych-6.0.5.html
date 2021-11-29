@@ -48,20 +48,6 @@ var welcome = {
     choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
 
-/*********** prolific ID ***********
-var prolific = {
-type: 'survey-text',
-questions: [
-    {prompt: "Please turn off music, cell phone and other devices that might be distracting. Please enter your prolific ID below: ", required: true}],
-on_finish: function(data) {
-    var responses = JSON.parse(data.responses);
-    var prolific_ID = responses.Q0;
-    jsPsych.data.addProperties({
-    prolific_ID: prolific_ID
-    });
-}
-}; */
-
 /*********** fullscreen mode ***********/
 var fullscreen_mode = {
 type: 'fullscreen',
@@ -160,23 +146,28 @@ var block_end = {
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
 
-// the debriefing message 
-var debrief = {
-    type: 'html-keyboard-response',
-    stimulus: `
-    <p>Thank you for participating!</p>
-    <p...</p>
-    `,
-    choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
-};
 
 /* creating the different sequences */
 // each of these sequences will be pushed into the timeline at the end of the script
+// first, we make an empty array that will count up in every trial
+// var trial_i = [];
+// second, we create the message that will be presented before each game
+/*var before_trial_message = {
+    type: 'html-keyboard-response',
+    on_start: function(before_trial_message){
+        if (trial_i == 1){
+            before_trial_message.stimulus == "Press an arrow key to start";
+        } else {
+            before_trial_message.stimulus == "Press an arrow key to start the next gamble";
+        }
+        }
+        }; */
+// now we can make the different sequences
 var practice_sequence = {
     timeline: [
         {
             type: 'html-keyboard-response',
-            stimulus: 'Press an arrow key to start the next gamble',
+            stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             },
         {
@@ -202,7 +193,7 @@ var loss_sequence = {
     timeline: [
         {
             type: 'html-keyboard-response',
-            stimulus: 'Press an arrow key to start the next gamble',
+            stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
         },
         {
@@ -240,7 +231,7 @@ var random_sequence_1 = {
     timeline: [
     {
             type: 'html-keyboard-response',
-            stimulus: 'Press an arrow key to start the next gamble',
+            stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
         },
         {
@@ -278,7 +269,7 @@ var random_sequence_2 = {
     timeline: [
         {
             type: 'html-keyboard-response',
-            stimulus: 'Press an arrow key to start the next gamble',
+            stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
         },
         {
@@ -312,6 +303,50 @@ var random_sequence_2 = {
     ]
     };
 
+// the message that is shown after the task is done 
+var instruction_for_the_question = {
+    type: 'html-keyboard-response',
+    stimulus: `
+    <p>You have finished the gambling task.</p>
+    <P>Please answer the question on the next page and then you are done.</p>
+    <p>Press an arrow key to see the question.</p>
+    `,
+    choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
+};
+
+/*********** manipulation check ***********/
+// a yes/no statment to see whether the participant is prone to believing in the gambler's fallacy? 
+var manipulation_check = {
+  type: 'survey-multi-choice',
+  questions: [{
+    prompt: "When I’m gambling, I should keep the same bet even when it hasn’t come up lately because it is bound to win.",
+    options: ["yes", "no"],
+    required: true
+  }, ],
+  on_start: function() {
+    document.body.style.cursor = 'auto'; // show the mouse cursor
+  },
+  on_finish: function(data) {
+    var responses = JSON.parse(data.responses);
+    var code = responses.Q0;
+    jsPsych.data.addProperties({
+      manipulation: code
+    });
+  }
+};
+
+/*** the debriefing message ***/
+var debrief = {
+    type: 'html-keyboard-response',
+    stimulus: `
+    <p>Thank you for participating!</p>
+    <p>In this study, we are interested in impulsive actions. When gambling, people tend to start their next trial faster after losing than after winning. This is believed to be an impulsive action.
+    <p> In this research we wanted to test whether losing a lot has an influence on this action.</p>
+    <p>We really appreciate your participation and contribution to this research. If you have any questions, you can contact the researcher at milena.waterschoot@ugent.be.</p>
+    <p>##Do they have to press on a link as well to leave or...?##</p>
+    `
+};
+
 /* creating the timeline */
 // the welcome message
 timeline.push(welcome);
@@ -341,11 +376,15 @@ timeline.push(block_end);
 // block 3
 timeline.push(loss_sequence);
 timeline.push(random_sequence_1);
-timeline.push(block_end);
+timeline.push(block_end); 
 // block 4
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
-timeline.push(block_end);
+timeline.push(block_end); 
+// announcement that they are done with the gambling task and have to fill in one last question
+timeline.push(instruction_for_the_question);
+// show the manipulation check
+timeline.push(manipulation_check);
 // debrief message
 timeline.push(debrief);
 
