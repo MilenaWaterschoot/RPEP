@@ -433,11 +433,11 @@ jsPsych.init({
       if (online){ // you can only write data when you run the experiment online
         // var subjID = jsPsych.data.get().last(1).values()[0]['prolific_ID'];   // do my participants have some kind of subject ID?
         if (data.trial_index == 1){ // write header at first event
-          data_row = "Gender,Nationality, outcome, startRT, manipulation\n"
+          data_row = "Gender,Nationality, outcome, startRT, key_press, manipulation\n"
           appendData('RPRP_data_'/*+ subjID*/ +'.csv', data_row) 
         } else if (data.trial_type == 'task' || data.trial_type == 'survey-likert'){ // append data for these certain trial types
           data_row = /*data.prolific_ID +*/ data.gender + ',' + data.trial_i + ','  + data.trial_type + ',' +
-           data.outcome + ',' + data.startRT + ',' + data.manipulation +  '\n'
+           data.outcome + ',' + data.startRT + ',' + data.key_press + ','+  data.manipulation +  '\n'
           appendData('RPEP_data_'+ /* subjID +*/'.csv', data_row)
         }
       }
