@@ -26,7 +26,7 @@
 var timeline = [];
 
 // create an empty variable to keep track of which trial it is
-var trial_i = [];
+var trial_ind = 1;
 
 // defining all the images so they can be preloaded
 var all_images = ['img/yellow.png', 'img/orange.png', 'img/green.png','img/blue.png'
@@ -45,7 +45,8 @@ var welcome = {
     type: 'html-keyboard-response',
     stimulus: `
     <p>Welcome to the experiment.</p>
-    <p>Please turn off music, cell phone and other devices that might be distracting.</p>
+    <p>Please make sure you are in a calm environment.</p>
+    >p>Turn off music, cell phone and other devices that might be distracting.</p>
     <p>Press an arrow key to begin.</p>
     `,
     choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
@@ -123,7 +124,7 @@ var practice_message = {
   <br>We will start with three practice games.</br>
   <br>The points you win or lose in the following three games won't be added or subtracted from your starting amount.</br>
         
-  <p>Press an arrow key when you are ready to continue.</p>
+  <p>Press an arrow key to continue.</p>
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
@@ -437,7 +438,7 @@ var random_sequence_2 = {
 var overall_feedback = {
     type: 'html-keyboard-response',
     stimulus: `
-    <p>You have finished the gambling task.</p>
+    <p>You have finished the gambling game.</p>
     <P>You ended up with a total of 100 points.</p>
     <p>Press an arrow key to continue.</p>
     `,
@@ -482,9 +483,8 @@ var debrief_message = {
     stimulus: `
     <p>Thank you for participating!</p>
     <p>In this study, we are interested in impulsive actions. When gambling, people tend to start their next game faster after losing than after winning. This is believed to be an impulsive action.
-    <p>In this research we wanted to test whether losing a lot has an influence on this action. This is why you lost more than you won. The frequency of losing and the order in which this happend was predetermined by us.</p>
+    <p>In this research we wanted to test whether losing frequently has an influence on this action. This is why you lost more than you won. The frequency of losing and the order in which this happend was predetermined by us.</p>
     <p>We really appreciate your participation and contribution to this research. If you have any questions, you can contact the researcher at milena.waterschoot@ugent.be.</p>
-    <p>##Do they have to press on a link as well to leave or...?##</p>
     `
 };
 
@@ -531,7 +531,6 @@ timeline.push(manipulation_check);
 timeline.push(debrief_message);
 
 /*** function that appends data to an existing file (or creates the file if it does not exist) ***/
-// Is this correct?
 function appendData(filename, filedata) {
   $.ajax({ // make sure jquery-1.7.1.min.js is loaded in the html header for this to work
     type: 'post',
