@@ -25,8 +25,8 @@
 // create timeline 
 var timeline = [];
 
-// create an empty variable to keep track of which trial it is
-var trial_ind = 1;
+// create a variable to keep track of which trial it is
+var trial_ind = 0;
 
 // defining all the images so they can be preloaded
 var all_images = ['img/yellow.png', 'img/orange.png', 'img/green.png','img/blue.png'
@@ -242,7 +242,7 @@ var practice_sequence = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);  
+                data.outcome = jsPsych.timelineVariable('feedback', true);
             }
         }
     ],
@@ -290,6 +290,7 @@ var loss_sequence = {
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
                 data.outcome = jsPsych.timelineVariable('feedback', true);  
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -351,6 +352,7 @@ var random_sequence_1 = {
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
                 data.outcome = jsPsych.timelineVariable('feedback', true);  
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -412,6 +414,7 @@ var random_sequence_2 = {
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
                 data.outcome = jsPsych.timelineVariable('feedback', true);  
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -488,13 +491,13 @@ var debrief_message = {
     `
 };
 
-/* creating the timeline */
+/* creating the timeline 
 // the welcome message
 timeline.push(welcome);
 // set to fullscreen mode
 timeline.push(fullscreen_mode);
 // show informed consent
-timeline.push(consent); 
+timeline.push(consent); */
 // ask gender
 timeline.push(gender);
 // the instructions
@@ -508,7 +511,7 @@ timeline.push(real_experiment_message);
 // block 1
 timeline.push(loss_sequence);
 timeline.push(random_sequence_1);
-timeline.push(block_end); 
+timeline.push(block_end); /*
 // block 2
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
@@ -521,7 +524,7 @@ timeline.push(block_end);
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
 timeline.push(block_end); 
-// tell the participant with how many points they ended up
+// tell the participant with how many points they ended up */
 timeline.push(overall_feedback);
 // announcement that they are done with the gambling task and have to fill in one last question 
 timeline.push(instruction_for_the_question);
@@ -550,7 +553,7 @@ jsPsych.init({
   preload_images: all_images,
   on_data_update: function(data){
      if (online){ // you can only write data when you run the experiment online
-        if (data.trial_index == 1){ // write header at first event
+        if (data.trial_index == 0){ // write header at first event
           data_row = "gender, outcome, startRT, choiceRT, manipulation\n"
           appendData('RPRP_data'+'.csv', data_row) 
         } else if (data.trial_type == 'task' || data.trial_type == 'survey-multi-choice'){ // append data for these certain trial types
