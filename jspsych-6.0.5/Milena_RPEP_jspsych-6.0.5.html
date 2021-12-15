@@ -29,6 +29,8 @@ var trial_ind = 1;
 // create variables for all Rt measures
 var startRT;
 var choiceRT;
+var startKey;
+var choiceKey;
 
 // defining all the images so they can be preloaded
 var all_images = ['img/yellow.png', 'img/orange.png', 'img/green.png','img/blue.png'
@@ -77,16 +79,36 @@ button_label_next: "I agree",
 allow_backward: false
 };
 
-/*********** prolific ID ***********/
+/*********** subject ID ***********/
 var subject_ID = {
   type: 'survey-text',
   questions: [
-    {prompt: "Please enter your prolific ID below: ", required: true}],
+    {prompt: `
+      <p>Please enter your name below.</p>
+      <p>We need your name to approve your submission, the moment it is approved we will replace your name with a random number to anonymize the data.</p>
+     `, 
+    required: true}],
   on_finish: function(data) {
     var responses = JSON.parse(data.responses);
     var subject_ID = responses.Q0;
     jsPsych.data.addProperties({
       subject_ID: subject_ID
+    });
+  }
+};
+
+// get participant's age and add it to the datafile
+var age = {
+  type: 'survey-text',
+  questions: [{
+    prompt: "Please enter your age",
+    required: true
+  }, ],
+  on_finish: function(data) {
+    var responses = JSON.parse(data.responses);
+    var code = responses.Q0;
+    jsPsych.data.addProperties({
+      age: code
     });
   }
 };
@@ -184,6 +206,8 @@ var first_trial = {
                 // get the data 
                 startRT = data.rt;
                 // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
+                // what key did they press?
+                startKey = data.key_press;
             }
                     },
         {
@@ -197,10 +221,13 @@ var first_trial = {
                 /*** How fast did the participant chose a card? ***/
                 // get the data 
                 choiceRT = data.rt;
+                choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
+                data.choiceKey = choiceKey;
+                data.startKey = startKey;
                 // console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
@@ -239,6 +266,8 @@ var practice_sequence = {
                 // get the data 
                 startRT = data.rt;
                 // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
+                // register which key was pressed
+                startKey = data.key_press;
             }
                     },
         {
@@ -252,10 +281,13 @@ var practice_sequence = {
                 /*** How fast did the participant chose a card? ***/
                 // get the data
                 choiceRT = data.rt;
+                choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register trial number
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
+                data.startKey = startRT;
+                data.choiceKey = choiceRT;
                 //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
@@ -292,6 +324,8 @@ var loss_sequence = {
                 // get the data 
                 startRT = data.rt;
                 // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
+                // register which key was pressed
+                startKey = data.key_press;
             }
             },
         {
@@ -305,10 +339,13 @@ var loss_sequence = {
               /*** How fast did the participant chose a card? ***/
               // get the data
               choiceRT = data.rt;
+              choiceKey = data.key_press;
               data.trial_ind = trial_ind; // register trial number
               data.choiceRT = choiceRT;
               data.startRT = startRT;
               data.outcome = jsPsych.timelineVariable('feedback', true);
+              data.startKey = startKey;
+              data.choiceKey = choiceKey;
             //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
@@ -359,6 +396,8 @@ var random_sequence_1 = {
                 // get the data 
                 startRT = data.rt;
                 // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
+                // register which key they pressed
+                startKey = data.key_press;
             }
             },
         {
@@ -372,10 +411,13 @@ var random_sequence_1 = {
               /*** How fast did the participant chose a card? ***/
               // get the data
               choiceRT = data.rt;
+              choiceKey = data.key_press;
               data.trial_ind = trial_ind; // register trial number
               data.choiceRT = choiceRT;
               data.startRT = startRT;
               data.outcome = jsPsych.timelineVariable('feedback', true);
+              data.startKey = startKey;
+              data.choiceKey = choiceKey;
             //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
@@ -426,6 +468,8 @@ var random_sequence_2 = {
                 // get the data 
                 startRT = data.rt;
                 // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
+                // register which key was pressed
+                startKey = data.key_press;
             }
         },
         {
@@ -439,10 +483,13 @@ var random_sequence_2 = {
               /*** How fast did the participant chose a card? ***/
               // get the data
               choiceRT = data.rt;
+              choiceKey = data.key_press;
               data.trial_ind = trial_ind; // register trial number
               data.choiceRT = choiceRT;
               data.startRT = startRT;
               data.outcome = jsPsych.timelineVariable('feedback', true);
+              data.startKey = startKey;
+              data.choiceKey = choiceKey;
             //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
@@ -542,6 +589,8 @@ timeline.push(fullscreen_mode);
 timeline.push(consent); */
 // ask for their subject ID
 timeline.push(subject_ID);
+// ask age
+timeline.push(age);
 // ask gender
 timeline.push(gender);
 // the instructions
@@ -549,7 +598,7 @@ timeline.push(instructions);
 // practice block
 timeline.push(practice_message);
 timeline.push(first_trial);
-timeline.push(practice_sequence); 
+timeline.push(practice_sequence); /*
 // anouncement that we will start the real game
 timeline.push(real_experiment_message);
 // block 1
@@ -599,10 +648,11 @@ jsPsych.init({
      if (online){ // you can only write data when you run the experiment online
        var subjID = jsPsych.data.get().last(1).values()[0]['subject_ID'];
         if (data.trial_index == 1){ // write header at first event
-          data_row = "gender, outcome, startRT, choiceRT, manipulation, trial_number\n"
+          data_row = "subjectID, age, gender, outcome, startKey, startRT, choiceKey, choiceRT, manipulation, trial_number\n"
           appendData('RPEP_data'+ subjID +'.csv', data_row)
         } else if (data.trial_type == 'task' || data.trial_type == 'survey-multi-choice'){ // append data for these certain trial types
-          data_row = data.gender + ',' + data.outcome + ',' + data.startRT + ',' + data.choiceRT + ',' + data.manipulation + ',' + data.trial_ind + '\n'
+          data_row = data.subjectID + ',' + data.age + ',' + data.gender + ',' + data.outcome + ',' + data.startKey + ',' + data.startRT + ',' + data.choiceKey
+          + ',' + data.choiceRT + ',' + data.manipulation + ',' + data.trial_ind + '\n'
           appendData('RPEP_data'+ subjID + '.csv', data_row)
         }
       }
