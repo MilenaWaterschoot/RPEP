@@ -92,7 +92,7 @@ var subject_ID = {
     var responses = JSON.parse(data.responses);
     var subject_ID = responses.Q0;
     jsPsych.data.addProperties({
-      subject_ID: subject_ID,               ////////////////////////////////////////////////////////////////
+      subject_ID: subject_ID               
     });
   }
 };
@@ -200,13 +200,10 @@ var first_trial = {
             stimulus: "Press an arrow key to start",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
-                // this labels the trial in the debug console, is handy for the progammer
-                // console.log('start', data); 
                 /*** How fast did the participant initialize the next gamble? ***/
                 // get the data 
                 startRT = data.rt;
-                // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
-                // what key did they press?
+                // register the key press
                 startKey = data.key_press;
             }
                     },
@@ -215,20 +212,20 @@ var first_trial = {
             stimulus: jsPsych.timelineVariable('cards'),
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
+                // register what type of trial this is
                 data.trial_type = 'task';
-                // this labels the trial in the debug console, is handy for the progammer
-                // console.log('cards', data)
                 /*** How fast did the participant chose a card? ***/
                 // get the data 
-                choiceRT = data.rt;
+                choiceRT = data.rt; 
+                // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
+                // 
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
                 data.choiceKey = choiceKey;
                 data.startKey = startKey;
-                // console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
             }
         },
         {
@@ -237,11 +234,8 @@ var first_trial = {
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
-                // to tag the trial with the label 'feedback'
-                console.log('feedback', data);
-                // this shows whether the participant lost or won
-                trial_ind = trial_ind + 1;
-                console.log('trial_index', trial_ind) 
+                // update the trial number
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -259,13 +253,10 @@ var practice_sequence = {
             stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
-                // this labels the trial in the debug console, is handy for the progammer
-                console.log('start', data); 
                 /*** How fast did the participant initialize the next gamble? ***/
                 // get the data 
                 startRT = data.rt;
-                // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
-                // register which key was pressed
+                // register the key press
                 startKey = data.key_press;
             }
                     },
@@ -274,20 +265,20 @@ var practice_sequence = {
             stimulus: jsPsych.timelineVariable('cards'),
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
+                // register what type of trial this is
                 data.trial_type = 'task';
-                 // this labels the trial in the debug console, is handy for the progammer
-            //  console.log('cards', data)
                 /*** How fast did the participant chose a card? ***/
-                // get the data
-                choiceRT = data.rt;
+                // get the data 
+                choiceRT = data.rt; 
+                // register the key press
                 choiceKey = data.key_press;
-                data.trial_ind = trial_ind; // register trial number
+                data.trial_ind = trial_ind; // register the trial number
+                // 
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
-                data.startKey = startRT;
-                data.choiceKey = choiceRT;
-                //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
+                data.choiceKey = choiceKey;
+                data.startKey = startKey;
             }
         },
         {
@@ -296,11 +287,8 @@ var practice_sequence = {
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
-                // to tag the trial with the label 'feedback'
-                console.log('feedback', data);
-                // this shows whether the participant lost or won
-                trial_ind = trial_ind +1;
-                console.log('trial_ind', trial_ind)
+                // update the trial number
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -316,13 +304,10 @@ var loss_sequence = {
             stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
-                // this labels the trial in the debug console, is handy for the progammer
-                console.log('start', data); 
                 /*** How fast did the participant initialize the next gamble? ***/
                 // get the data 
                 startRT = data.rt;
-                // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
-                // register which key was pressed
+                // register the key press
                 startKey = data.key_press;
             }
             },
@@ -331,20 +316,20 @@ var loss_sequence = {
             stimulus: jsPsych.timelineVariable('cards'),
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
-              data.trial_type = 'task';
-              // this labels the trial in the debug console, is handy for the progammer
-            //  console.log('cards', data)
-              /*** How fast did the participant chose a card? ***/
-              // get the data
-              choiceRT = data.rt;
-              choiceKey = data.key_press;
-              data.trial_ind = trial_ind; // register trial number
-              data.choiceRT = choiceRT;
-              data.startRT = startRT;
-              data.outcome = jsPsych.timelineVariable('feedback', true);
-              data.startKey = startKey;
-              data.choiceKey = choiceKey;
-            //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
+                // register what type of trial this is
+                data.trial_type = 'task';
+                /*** How fast did the participant chose a card? ***/
+                // get the data 
+                choiceRT = data.rt; 
+                // register the key press
+                choiceKey = data.key_press;
+                data.trial_ind = trial_ind; // register the trial number
+                // 
+                data.choiceRT = choiceRT;
+                data.startRT = startRT;
+                data.outcome = jsPsych.timelineVariable('feedback', true);
+                data.choiceKey = choiceKey;
+                data.startKey = startKey;
             }
         },
         {
@@ -353,11 +338,8 @@ var loss_sequence = {
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
-                // to tag the trial with the label 'feedback'
-                console.log('feedback', data);
-                // this shows whether the participant lost or won
-                trial_ind = trial_ind + 1;
-                console.log('trial_index', trial_ind)
+                // update the trial number
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -387,13 +369,10 @@ var random_sequence_1 = {
             stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
-                // this labels the trial in the debug console, is handy for the progammer
-                console.log('start', data); 
                 /*** How fast did the participant initialize the next gamble? ***/
                 // get the data 
                 startRT = data.rt;
-                // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
-                // register which key they pressed
+                // register the key press
                 startKey = data.key_press;
             }
             },
@@ -402,20 +381,20 @@ var random_sequence_1 = {
             stimulus: jsPsych.timelineVariable('cards'),
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
-              data.trial_type = 'task';
-              // this labels the trial in the debug console, is handy for the progammer
-            //  console.log('cards', data)
-              /*** How fast did the participant chose a card? ***/
-              // get the data
-              choiceRT = data.rt;
-              choiceKey = data.key_pressn;
-              data.trial_ind = trial_ind; // register trial number
-              data.choiceRT = choiceRT;
-              data.startRT = startRT;
-              data.outcome = jsPsych.timelineVariable('feedback', true);
-              data.startKey = startKey;
-              data.choiceKey = choiceKey;
-            //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
+                // register what type of trial this is
+                data.trial_type = 'task';
+                /*** How fast did the participant chose a card? ***/
+                // get the data 
+                choiceRT = data.rt; 
+                // register the key press
+                choiceKey = data.key_press;
+                data.trial_ind = trial_ind; // register the trial number
+                // 
+                data.choiceRT = choiceRT;
+                data.startRT = startRT;
+                data.outcome = jsPsych.timelineVariable('feedback', true);
+                data.choiceKey = choiceKey;
+                data.startKey = startKey;
             }
         },
         {
@@ -424,11 +403,8 @@ var random_sequence_1 = {
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
-                // to tag the trial with the label 'feedback'
-                console.log('feedback', data);
-                // this shows whether the participant lost or won
-                trial_ind = trial_ind + 1;
-                console.log('trial_index', trial_ind)
+                // update the trial number
+                trial_ind = trial_ind + 1
             }
         }
     ],
@@ -458,13 +434,10 @@ var random_sequence_2 = {
             stimulus: "Press an arrow key to start the next gamble",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
-                // this labels the trial in the debug console, is handy for the progammer
-                console.log('start', data); 
                 /*** How fast did the participant initialize the next gamble? ***/
                 // get the data 
                 startRT = data.rt;
-                // console.log("startRT", startRT) // this shows the registred startRT -> compare this to what the csv file saves
-                // register which key was pressed
+                // register the key press
                 startKey = data.key_press;
             }
         },
@@ -473,20 +446,20 @@ var random_sequence_2 = {
             stimulus: jsPsych.timelineVariable('cards'),
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
-              data.trial_type = 'task';
-              // this labels the trial in the debug console, is handy for the progammer
-            //  console.log('cards', data)
-              /*** How fast did the participant chose a card? ***/
-              // get the data
-              choiceRT = data.rt;
-              choiceKey = data.key_press;
-              data.trial_ind = trial_ind; // register trial number
-              data.choiceRT = choiceRT;
-              data.startRT = startRT;
-              data.outcome = jsPsych.timelineVariable('feedback', true);
-              data.startKey = startKey;
-              data.choiceKey = choiceKey;
-            //  console.log("choiceRT", choiceRT) // this shows the registred choiceRT -> compare this to what the csv file saves
+                // register what type of trial this is
+                data.trial_type = 'task';
+                /*** How fast did the participant chose a card? ***/
+                // get the data 
+                choiceRT = data.rt; 
+                // register the key press
+                choiceKey = data.key_press;
+                data.trial_ind = trial_ind; // register the trial number
+                // 
+                data.choiceRT = choiceRT;
+                data.startRT = startRT;
+                data.outcome = jsPsych.timelineVariable('feedback', true);
+                data.choiceKey = choiceKey;
+                data.startKey = startKey;
             }
         },
         {
@@ -495,9 +468,7 @@ var random_sequence_2 = {
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
-                // to tag the trial with the label 'feedback'
-                console.log('feedback', data);
-                // this shows whether the participant lost or won
+                // update the trial number
                 trial_ind = trial_ind + 1
             }
         }
