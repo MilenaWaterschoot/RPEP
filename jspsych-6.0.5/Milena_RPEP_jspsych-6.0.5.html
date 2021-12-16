@@ -67,8 +67,8 @@ var consent = {
 type: 'instructions',
 pages: ['<p>We need your consent to proceed.</p> '+
     '<p> This is a research project conducted at Ghent University.</p>'+
-    '<p> In this experiment, you will play a gambling game.</p>'+
-    '<p> The data we collect during the experiment are not linked to any potentially identifying information. These data will solely be used for research purposes.</p>'+
+    '<p> In this experiment, you will play a gambling game and fill in some questions.</p>'+
+    '<p> The data we collect during the experiment are not linked to any potentially identifying information. These data will solely be used for research purposes. We will not use these data to look for clinical or behavioral problems, as we are not clinically trained to detect them.</p>'+
     '<p> Anonymized data from the study will be registered and archived at a trusted public data repository in order to make them available to other researchers in line with current data sharing practices. </p>'+ // is this also the case for me?
     '<p> You are free to stop the experiment by closing your browser window at any time.</p>'+
     '<p> Non-participation or withdrawal from the study will not be of any disadvantage to you.</p>'+
@@ -84,7 +84,7 @@ var subject_ID = {
   type: 'survey-text',
   questions: [
     {prompt: `
-      <p>Please enter your name below.</p>
+      <p>Please enter your full name below.</p>
       <p>We need your name to approve your submission, the moment it is approved we will replace your name with a random number to anonymize the data.</p>
      `, 
     required: true}],
@@ -92,7 +92,7 @@ var subject_ID = {
     var responses = JSON.parse(data.responses);
     var subject_ID = responses.Q0;
     jsPsych.data.addProperties({
-      subject_ID: subject_ID
+      subject_ID: subject_ID,               ////////////////////////////////////////////////////////////////
     });
   }
 };
@@ -126,7 +126,7 @@ on_finish: function(data) {
     var responses = JSON.parse(data.responses);
     var code = responses.Q0;
     jsPsych.data.addProperties({
-    gender: code
+      gender: code
     });
 }
 };
@@ -240,7 +240,6 @@ var first_trial = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);
                 trial_ind = trial_ind + 1;
                 console.log('trial_index', trial_ind) 
             }
@@ -300,7 +299,6 @@ var practice_sequence = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);
                 trial_ind = trial_ind +1;
                 console.log('trial_ind', trial_ind)
             }
@@ -358,7 +356,6 @@ var loss_sequence = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);
                 trial_ind = trial_ind + 1;
                 console.log('trial_index', trial_ind)
             }
@@ -411,7 +408,7 @@ var random_sequence_1 = {
               /*** How fast did the participant chose a card? ***/
               // get the data
               choiceRT = data.rt;
-              choiceKey = data.key_press;
+              choiceKey = data.key_pressn;
               data.trial_ind = trial_ind; // register trial number
               data.choiceRT = choiceRT;
               data.startRT = startRT;
@@ -430,7 +427,6 @@ var random_sequence_1 = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);
                 trial_ind = trial_ind + 1;
                 console.log('trial_index', trial_ind)
             }
@@ -502,7 +498,6 @@ var random_sequence_2 = {
                 // to tag the trial with the label 'feedback'
                 console.log('feedback', data);
                 // this shows whether the participant lost or won
-                data.outcome = jsPsych.timelineVariable('feedback', true);
                 trial_ind = trial_ind + 1
             }
         }
@@ -649,11 +644,11 @@ jsPsych.init({
        var subjID = jsPsych.data.get().last(1).values()[0]['subject_ID'];
         if (data.trial_index == 1){ // write header at first event
           data_row = "subjectID, age, gender, outcome, startKey, startRT, choiceKey, choiceRT, manipulation, trial_number\n"
-          appendData('RPEP_data'+ subjID +'.csv', data_row)
+          appendData('RPEP_data_'+ subjID +'.csv', data_row)
         } else if (data.trial_type == 'task' || data.trial_type == 'survey-multi-choice'){ // append data for these certain trial types
           data_row = data.subjectID + ',' + data.age + ',' + data.gender + ',' + data.outcome + ',' + data.startKey + ',' + data.startRT + ',' + data.choiceKey
           + ',' + data.choiceRT + ',' + data.manipulation + ',' + data.trial_ind + '\n'
-          appendData('RPEP_data'+ subjID + '.csv', data_row)
+          appendData('RPEP_data_'+ subjID + '.csv', data_row)
         }
       }
     },
