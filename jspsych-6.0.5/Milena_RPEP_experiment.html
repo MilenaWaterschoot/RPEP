@@ -65,17 +65,29 @@ fullscreen_mode: true
 // informed consent trial.
 var consent = {
 type: 'instructions',
-pages: ['<p>We need your consent to proceed.</p> '+
-    '<p> This is a research project conducted at Ghent University.</p>'+
-    '<p> In this experiment, you will play a gambling game and fill in some questions.</p>'+
-    '<p> The data we collect during the experiment are not linked to any potentially identifying information. These data will solely be used for research purposes. We will not use these data to look for clinical or behavioral problems, as we are not clinically trained to detect them.</p>'+
-    '<p> Anonymized data from the study will be registered and archived at a trusted public data repository in order to make them available to other researchers in line with current data sharing practices. </p>'+ // is this also the case for me?
-    '<p> You are free to stop the experiment by closing your browser window at any time.</p>'+
-    '<p> Non-participation or withdrawal from the study will not be of any disadvantage to you.</p>'+
-    '<p> If you have any questions, you can contact Milena Waterschoot at milena.waterschoot@ugent.be or the lead researcher Charlotte Eben at charlotte.eben@ugent.be. </p>'+
-    '<p> By clicking “I agree”, you affirm that you are at least 18 years of age, which is the minimum age to participate in this study, and that you understand the nature of your participation in this research. If you do not wish to participate, please close this window.</p>'],
+pages: [
+  '<p>This is a research project conducted at Ghent University. '+
+  'We will store your name until the approval of submission is made, after which the data will be fully anonymized. '+
+  'The data we collect with this experiment are not linked to any other potentially identifying information like an IP address and/or identity. '+
+  'These data will solely be used for research purposes. '+
+  'The anonymous data from the study will be registered and archived at a trusted public data repository in order to make them available to other researchers in line with current data sharing practices. '+
+  'The data will be used only for research purposes and averaged results of this study will be made openly available to the global public once the data is analyzed, but individual data will not be reported in the final publication. '+
+  'You are free to stop the experiment by closing your browser window at any time. '+
+  'Non-participation or withdrawal from the study will not be of any disadvantage to you. '+
+  'If you require more information about this study, please contact Prof. Frederick Verbruggen (Lead Researcher); Email: frederick.verbruggen@ugent.be</p>'+
+  '<p> By clicking “I want to participate”, you affirm that you: ' +
+  '<p> - are at least 18 years old </p>' +
+  '<p> - have been informed about the research objectives, the questions and the tasks that you will encounter and that you were given the opportunity to receive further information. </p>' +
+  '<p> - participate out of free will. </p>' +
+  '<p> - give informed consent to the researcher(s) to store, process, and report your anonymous data.</p>' +
+  '<p> - are aware of the option to stop your participation in this research at any moment without giving a reason.</p>' +
+  '<p> - know that participating or stopping your participation in this research has no negative consequences of any kind for you.</p>' +
+  '<p> - are aware of the option to ask the researcher(s) for a summary of the results after the study is finished and the results have been known.</p>' +
+  '<p> - agree that your anonymous data may be used for further analysis by other researchers.</p>' +
+  '<p> - are aware that Ghent University is the responsible entity with regards to the personal information collected during the study, and that the data protection officer can give you more information about the protection of your personal information.</p>'+
+  '<p> Contact: privacy@ugent.be</p>'],
 show_clickable_nav: true,
-button_label_next: "I agree",
+button_label_next: "I want to participate",
 allow_backward: false
 };
 
