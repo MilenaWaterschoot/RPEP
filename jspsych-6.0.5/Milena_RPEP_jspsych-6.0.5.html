@@ -20,7 +20,7 @@
 
 /** initialization **/
 
-// create timeline 
+// create timeline
 var timeline = [];
 
 // create a variable to keep track of which trial it is
@@ -86,13 +86,13 @@ var subject_ID = {
     {prompt: `
       <p>Please enter your full name below.</p>
       <p>We need your name to approve your submission, the moment it is approved we will replace your name with a random number to anonymize the data.</p>
-     `, 
+     `,
     required: true}],
   on_finish: function(data) {
     var responses = JSON.parse(data.responses);
     var subject_ID = responses.Q0;
     jsPsych.data.addProperties({
-      subject_ID: subject_ID               
+      subject_ID: subject_ID
     });
   }
 };
@@ -161,7 +161,7 @@ var practice_message = {
   stimulus: `
   <br>We will start with three practice games.</br>
   <br>The points you win or lose in the following three games won't be added or subtracted from your starting amount.</br>
-        
+
   <p>Press an arrow key to continue.</p>
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
@@ -172,13 +172,13 @@ var real_experiment_message = {
   type: 'html-keyboard-response',
   stimulus: `
   <br>The practice block is over.</br>
-        
+
   <p>Press an arrow key to start the real game.</p>
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
 
-// message that says they can take a break 
+// message that says they can take a break
 // is shown between blocks
 var block_end = {
   type: 'html-keyboard-response',
@@ -201,7 +201,7 @@ var first_trial = {
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
-                // get the data 
+                // get the data
                 startRT = data.rt;
                 // register the key press
                 startKey = data.key_press;
@@ -215,12 +215,12 @@ var first_trial = {
                 // register what type of trial this is
                 data.trial_type = 'task';
                 /*** How fast did the participant chose a card? ***/
-                // get the data 
-                choiceRT = data.rt; 
+                // get the data
+                choiceRT = data.rt;
                 // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
-                // 
+                //
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
@@ -230,7 +230,7 @@ var first_trial = {
         },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('feedback'),         
+            stimulus: jsPsych.timelineVariable('feedback'),
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
@@ -239,7 +239,7 @@ var first_trial = {
             }
         }
     ],
-    timeline_variables: [                       
+    timeline_variables: [
         { cards: yellow, feedback: '+5' }
     ]
     };
@@ -254,7 +254,7 @@ var practice_sequence = {
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
-                // get the data 
+                // get the data
                 startRT = data.rt;
                 // register the key press
                 startKey = data.key_press;
@@ -268,12 +268,12 @@ var practice_sequence = {
                 // register what type of trial this is
                 data.trial_type = 'task';
                 /*** How fast did the participant chose a card? ***/
-                // get the data 
-                choiceRT = data.rt; 
+                // get the data
+                choiceRT = data.rt;
                 // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
-                // 
+                //
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
@@ -283,7 +283,7 @@ var practice_sequence = {
         },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('feedback'),         
+            stimulus: jsPsych.timelineVariable('feedback'),
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
@@ -305,7 +305,7 @@ var loss_sequence = {
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
-                // get the data 
+                // get the data
                 startRT = data.rt;
                 // register the key press
                 startKey = data.key_press;
@@ -319,12 +319,12 @@ var loss_sequence = {
                 // register what type of trial this is
                 data.trial_type = 'task';
                 /*** How fast did the participant chose a card? ***/
-                // get the data 
-                choiceRT = data.rt; 
+                // get the data
+                choiceRT = data.rt;
                 // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
-                // 
+                //
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
@@ -334,7 +334,7 @@ var loss_sequence = {
         },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('feedback'),         
+            stimulus: jsPsych.timelineVariable('feedback'),
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
@@ -370,7 +370,7 @@ var random_sequence_1 = {
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
-                // get the data 
+                // get the data
                 startRT = data.rt;
                 // register the key press
                 startKey = data.key_press;
@@ -384,12 +384,12 @@ var random_sequence_1 = {
                 // register what type of trial this is
                 data.trial_type = 'task';
                 /*** How fast did the participant chose a card? ***/
-                // get the data 
-                choiceRT = data.rt; 
+                // get the data
+                choiceRT = data.rt;
                 // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
-                // 
+                //
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
@@ -399,7 +399,7 @@ var random_sequence_1 = {
         },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('feedback'),         
+            stimulus: jsPsych.timelineVariable('feedback'),
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
@@ -435,7 +435,7 @@ var random_sequence_2 = {
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
-                // get the data 
+                // get the data
                 startRT = data.rt;
                 // register the key press
                 startKey = data.key_press;
@@ -449,12 +449,12 @@ var random_sequence_2 = {
                 // register what type of trial this is
                 data.trial_type = 'task';
                 /*** How fast did the participant chose a card? ***/
-                // get the data 
-                choiceRT = data.rt; 
+                // get the data
+                choiceRT = data.rt;
                 // register the key press
                 choiceKey = data.key_press;
                 data.trial_ind = trial_ind; // register the trial number
-                // 
+                //
                 data.choiceRT = choiceRT;
                 data.startRT = startRT;
                 data.outcome = jsPsych.timelineVariable('feedback', true);
@@ -464,7 +464,7 @@ var random_sequence_2 = {
         },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('feedback'),         
+            stimulus: jsPsych.timelineVariable('feedback'),
             choices: "NO_KEYS",
             trial_duration: 1000,
             on_finish: function(data) {
@@ -503,7 +503,7 @@ var overall_feedback = {
     choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
 
-// the message that is shown after the task is done 
+// the message that is shown after the task is done
 var instruction_for_the_question = {
     type: 'html-keyboard-response',
     stimulus: `
@@ -514,7 +514,7 @@ var instruction_for_the_question = {
 };
 
 /*********** manipulation check ***********/
-// a yes/no statment to see whether the participant is prone to believing in the gambler's fallacy? 
+// a yes/no statment to see whether the participant is prone to believing in the gambler's fallacy?
 var manipulation_check = {
   type: 'survey-multi-choice',
   questions: [{
@@ -546,7 +546,7 @@ var debrief_message = {
     `
 };
 
-/* creating the timeline 
+/* creating the timeline
 // the welcome message
 timeline.push(welcome);
 // set to fullscreen mode
@@ -578,14 +578,14 @@ timeline.push(block_end);
 // block 3
 timeline.push(loss_sequence);
 timeline.push(random_sequence_1);
-timeline.push(block_end); 
+timeline.push(block_end);
 // block 4
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
-timeline.push(block_end); 
+timeline.push(block_end);
 // tell the participant with how many points they ended up */
 timeline.push(overall_feedback);
-// announcement that they are done with the gambling task and have to fill in one last question 
+// announcement that they are done with the gambling task and have to fill in one last question
 timeline.push(instruction_for_the_question);
 // show the manipulation check
 timeline.push(manipulation_check);
@@ -617,7 +617,7 @@ jsPsych.init({
           data_row = "subjectID, age, gender, outcome, startKey, startRT, choiceKey, choiceRT, manipulation, trial_number\n"
           appendData('RPEP_data_'+ subjID +'.csv', data_row)
         } else if (data.trial_type == 'task' || data.trial_type == 'survey-multi-choice'){ // append data for these certain trial types
-          data_row = data.subjectID + ',' + data.age + ',' + data.gender + ',' + data.outcome + ',' + data.startKey + ',' + data.startRT + ',' + data.choiceKey
+          data_row = data.subject_ID + ',' + data.age + ',' + data.gender + ',' + data.outcome + ',' + data.startKey + ',' + data.startRT + ',' + data.choiceKey
           + ',' + data.choiceRT + ',' + data.manipulation + ',' + data.trial_ind + '\n'
           appendData('RPEP_data_'+ subjID + '.csv', data_row)
         }
