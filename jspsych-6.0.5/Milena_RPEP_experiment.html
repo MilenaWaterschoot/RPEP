@@ -18,6 +18,9 @@
 <body></body>
 <script>
 
+
+//CE: If you call the document index.html it will be the only one that is opened when your folder is online. Every browser always looks for an index.html file first. You should also add an index.html file that is completely empty to your data folder to ensure that nobody except you can see the names of the people that participated.
+
 /** initialization **/
 
 // create timeline
@@ -125,6 +128,7 @@ var age = {
   }
 };
 
+//CE: If you feel like it you can put all demographics in one screen as well. As you like it.
 // get participant's gender and add it to the datafile
 var gender = {
 type: 'survey-multi-choice',
@@ -143,7 +147,7 @@ on_finish: function(data) {
 }
 };
 
-/* defining the cards */
+/* defining the cards */  //CE: purely for readability, I would put it at the beginning but that is personal taste :)
 yellow = "<img src='img/yellow.png'></img>";
 orange = "<img src='img/orange.png'></img>";
 green = "<img src='img/green.png'></img>";
@@ -152,7 +156,7 @@ blue = "<img src='img/blue.png'></img>";
 /* initializing the text messages */
 // the instructions
 var instructions = {
-  type: 'html-keyboard-response',
+  type: 'html-keyboard-response', //CE: Why are you not using the instructions plugin again? Both work but instructions are easier when you have multiple pages.
   stimulus: `
     <br>The game you are going to play, goes as follows:</br>
     <br>You must earn as many points as you can by choosing one of the two cards that will appear on the screen.</br>
@@ -166,6 +170,10 @@ var instructions = {
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
+
+//CE: I would change the instruction a bit. They don't have to. Say something like: Goal of the game is to earn as many points as possible. "You must earn..." sounds to strict.
+//CE: Your participants will not know what ">" means. Write the left arrow key or the write arrow key on your keyboard (I had that problem multiple times that participants told me there is no arrow on the screen and just stopped)
+
 
 // practice block message
 var practice_message = {
@@ -189,14 +197,14 @@ var real_experiment_message = {
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
-
+// CE: Maybe remind them that now the points are counting?
 // message that says they can take a break
 // is shown between blocks
 var block_end = {
   type: 'html-keyboard-response',
   stimulus: `
   <p>If you want, you can take a break.</p>
-  <p>Press an arrow key when you are ready to continue.</p>
+  <p>Press an arrow key when you are ready to continue with the next block.</p>
   `,
   choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
@@ -209,7 +217,7 @@ var first_trial = {
     timeline: [
         {
             type: 'html-keyboard-response',
-            stimulus: "Press an arrow key to start",
+            stimulus: "Press an arrow key to start the game.",
             choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
             on_finish: function(data) {
                 /*** How fast did the participant initialize the next gamble? ***/
@@ -221,7 +229,7 @@ var first_trial = {
                     },
         {
             type: "html-keyboard-response",
-            stimulus: jsPsych.timelineVariable('cards'),
+            stimulus: jsPsych.timelineVariable('cards'), //CE: do you have a design so everything is shown equally?
             choices: ['leftarrow', 'rightarrow'],
             on_finish: function(data) {
                 // register what type of trial this is
@@ -252,7 +260,7 @@ var first_trial = {
         }
     ],
     timeline_variables: [
-        { cards: yellow, feedback: '+5' }
+        { cards: yellow, feedback: '+5' } //CE. Well, like this every participant ahs the exact same color. This might be a problem. WHy don't you make a design for the colors so they are reandomly chosen?
     ]
     };
 
@@ -309,6 +317,13 @@ var practice_sequence = {
         { cards: blue, feedback: '+5' }
     ]
     };
+    //CE: Same problem: make a design with
+    /*"var factors = {
+        cards: ['green', 'blue', 'yellow', 'orange'],
+    };
+
+    var full_design = jsPsych.randomization.factorial(factors, n_design_reps); (depending on how many repetitions you need per sequence)"
+    Then you can add full_design instead of cards: green */
 var loss_sequence = {
     timeline: [
         {
@@ -372,7 +387,7 @@ var loss_sequence = {
         { cards: green, feedback: '+5' },
         { cards: blue, feedback: '-5' }
     ]
-    };
+  }; //CE: See my comment above
 
 var random_sequence_1 = {
     timeline: [
@@ -514,6 +529,7 @@ var overall_feedback = {
     `,
     choices: ['leftarrow', 'rightarrow', 'downarrow', 'uparrow'],
 };
+// They start with 200 points and lose 100 points during the game?
 
 // the message that is shown after the task is done
 var instruction_for_the_question = {
@@ -530,7 +546,7 @@ var instruction_for_the_question = {
 var manipulation_check = {
   type: 'survey-multi-choice',
   questions: [{
-    prompt: "When I’m gambling, I should keep the same bet even when it hasn’t come up lately because it is bound to win.",
+    prompt: "When I’m gambling, I should keep betting on the same side when it hasn’t come up lately because then it is bound to win.", //CE: This was confusing.I changed it a bit, what do you say?
     options: ["yes", "no"],
     required: true
   }, ],
@@ -554,7 +570,7 @@ var debrief_message = {
     <p>Thank you for participating!</p>
     <p>In this study, we are interested in impulsive actions. When gambling, people tend to start their next game faster after losing than after winning. This is believed to be an impulsive action.
     <p>In this research we wanted to test whether losing frequently has an influence on this action. This is why you lost more than you won. The frequency of losing and the order in which this happend was predetermined by us.</p>
-    <p>We really appreciate your participation and contribution to this research. If you have any questions, you can contact the researcher at milena.waterschoot@ugent.be.</p>
+    <p>We really appreciate your participation and contribution to this research. If you have any questions, you can contact the researcher at milena.waterschoot@ugent.be or the lead researcher charlotte.eben@ugent.be.</p>
     `
 };
 
@@ -564,7 +580,7 @@ timeline.push(welcome);
 // set to fullscreen mode
 timeline.push(fullscreen_mode);
 // show informed consent
-timeline.push(consent); 
+timeline.push(consent);
 // ask for their subject ID
 timeline.push(subject_ID);
 // ask age
@@ -576,13 +592,13 @@ timeline.push(instructions);
 // practice block
 timeline.push(practice_message);
 timeline.push(first_trial);
-timeline.push(practice_sequence); 
+timeline.push(practice_sequence);
 // anouncement that we will start the real game
 timeline.push(real_experiment_message);
 // block 1
 timeline.push(loss_sequence);
 timeline.push(random_sequence_1);
-timeline.push(block_end); 
+timeline.push(block_end);
 // block 2
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
@@ -595,7 +611,7 @@ timeline.push(block_end);
 timeline.push(loss_sequence);
 timeline.push(random_sequence_2);
 timeline.push(block_end);
-// tell the participant with how many points they ended up 
+// tell the participant with how many points they ended up
 timeline.push(overall_feedback);
 // announcement that they are done with the gambling task and have to fill in one last question
 timeline.push(instruction_for_the_question);
