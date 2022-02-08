@@ -9,7 +9,6 @@
   <script src="jspsych-6.0.5/plugins/jspsych-survey-multi-choice.js"></script>
   <script src="jspsych-6.0.5/plugins/jspsych-categorize-html.js"></script>
   <script src="jspsych-6.0.5/plugins/jspsych-survey-text-beta-6.1.js"></script> <!-- beta 6.1 version has the 'input required' function for text fields -->
-  <script src="UPPSP.js"></script>
   <script src="jspsych-6.0.5/plugins/jspsych-survey-likert.js"></script>
   <script src="jspsych-6.0.5/plugins/jspsych-fullscreen.js"></script>
   <script src="js/jquery-1.7.1.min.js"></script> <!-- the jquery library is used to communicate with the server (to store the data) through "AJAX" and PHP -->
@@ -102,8 +101,8 @@ var subject_ID = {
   type: 'survey-text',
   questions: [
     {prompt: `
-      <p>Please enter your full name below.</p>
-      <p>We need your name to approve your submission, the moment it is approved we will replace your name with a random number to anonymize the data.</p>
+      <p>Please enter your first and last name below.</p>
+      <p>We need your full name to approve your submission, the moment it is approved we will replace your name with a random number to anonymize the data.</p>
      `,
     required: true}],
   on_finish: function(data) {
