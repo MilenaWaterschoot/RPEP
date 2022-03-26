@@ -1,0 +1,148 @@
+---
+title: "RPEP analysis"
+author: "Milena"
+date: "18-3-2022"
+output: html_document
+---
+
+```{r}
+rm(list=ls()) # clear the working directory
+library(plyr) # will use this for the arrange function
+library(Hmisc) #required for %nin%
+library(tidyverse)
+```
+
+```{r}
+# --- STEP 1: create a dataframe ---
+setwd( "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\data")
+input <- data.frame()
+files <- dir(pattern = "RPEP_data_") #files; double _ so that it detects underscore
+
+for (i in files) {
+  tmp <- read.csv (i, header = TRUE) #read the file
+  tmp <- tmp[tmp$X<=125, ]
+
+  #add the content to the data frame
+  input <- rbind (input, tmp)
+  #write.csv(tmp, file = paste("CardsData__",subj, ".csv", sep = "")) # we needed this to delete the prolific ID from the raw data sets
+  rm(tmp)
+}
+```
+```{r}
+# --- STEP 2: preprocessing ---
+# given the variables their correct class
+## these must be numeric
+input$trial_number <- as.numeric(input$trial_number) 
+input$startRT <- as.numeric(input$startRT)
+input$choiceRT <- as.numeric(input$choiceRT)
+## these must be factors
+input$outcome <- factor(input$outcome)
+input$participant <- factor(input$subjectID)
+input$gender <- factor(input$gender)
+input$manipulation <- factor(input$manipulation)
+
+# to make sure we have the correct order of trials per participant
+arrange(input, participant, trial_number) 
+# defining the outcome of the previous trial
+# input$outPrev <- c('NA', input$outcome[1:(nrow(input)-1)])
+input$outPrev <- lag(input$outcome)
+
+## and make it a factor
+input$outPrev <- factor(input$outPrev)
+# defining the start reaction time of the previous trial
+input$startPrev <- lag(input$startRT) # Start RT of trial n-1
+## and make it numeric
+input$startPrev <- as.numeric(input$startPrev)
+# calculating the difference between the RT of the current trial and the previous trial
+input$startDiff <- input$startRT - input$startPrev
+## and make it numeric
+input$startDiff <- as.numeric(input$startDiff)
+
+```
+
+```{r}
+# check overall if design worked
+#table(input$participant, input$outcome) # this shows for each participant how many -5 outcomes there were and how many +5 (and how many undefined (i.e., 2))
+#table(input$participant, input$choiceRT) # I don't understand this table
+
+```
+
+```{r}
+# --- STEP 3:  ---
+# this is needed otherwise the manipulation question is removed later on
+
+n <- 1
+
+answer <- c(1:100)
+
+for (i in c(1:100)) {
+  answer[n] <- as.character(input$manipulation[input$subjectID==i & input$X==125])
+  input$manipulation[input$subjectID==i] <- answer[n]
+  
+  n <- n+1
+}
+```
+
+```{r}
+# create a new column that says which condition we are in
+input$condition <- NA
+input$condition[input$trial_number >=1 & input$trial_number <=3] <- "Practice_Seq"
+input$condition[input$trial_number >=4 & input$trial_number <=18] <- "Loss_Seq"
+input$condition[input$trial_number >=19 & input$trial_number <=33] <- "Random_Seq"
+input$condition[input$trial_number >=34 & input$trial_number <=48] <- "Loss_Seq"
+input$condition[input$trial_number >=49 & input$trial_number <=63] <- "Random_Seq"
+input$condition[input$trial_number >=64 & input$trial_number <=78] <- "Loss_Seq"
+input$condition[input$trial_number >=79 & input$trial_number <=93] <- "Random_Seq"
+input$condition[input$trial_number >=94 & input$trial_number <=108] <- "Loss_Seq"
+input$condition[input$trial_number >=109 & input$trial_number <=123] <- "Random_Seq"
+
+
+
+
+
+
+```
+
+
+```{r}
+# STEP 4: exclusion
+# this subject might need to be excluded: is missing a trial
+subject_excl <- c(66)
+input <- subset(input, participant %nin% subject_excl)
+```
+
+
+```{r}
+# exclusion based on the a priori decided exclusion criteria
+before <- nrow(input)
+input <- subset(input, choiceRT < 2500) # remove trials with overly long RT 
+input <- subset(input, startRT < 5000) # remove trials with overly long RT 
+input <- subset(input, trial_number != 1) 
+input <- subset(input, trial_number != 2)
+input <- subset(input, trial_number != 3)
+input <- subset(input, trial_number != 4)
+input <- subset(input, trial_number != 34)
+input <- subset(input, trial_number != 64)
+input <- subset(input, trial_number != 94)
+# need to remove the practice trials: 1, 2, 3
+# need to remove the first trials of every block: 4, 34, 64, 94
+# do I also need to remove the first trial of the random sequence? i.e., 19, 49, 79, 109
+input <- subset(input, outPrev != 'undefined')
+after <- nrow(input)
+removed <- 1 - (after/before)
+removed # the fraction of trials removed 
+```
+```{r}
+#to make sure variables are saved in the correct format
+input$startRT <- as.numeric(input$startRT)
+input$choiceRT <- as.numeric(input$choiceRT)
+input$trial_number <- as.numeric(input$trial_number)
+```
+
+```{r}
+# --- STEP 5:  write everything to a file ---
+input$participant <- droplevels(input$participant) # drop unused levels factor
+input$outPrev <- droplevels(input$outPrev) # drop unused levels factor
+save(input, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata")
+```
+

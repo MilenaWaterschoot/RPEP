@@ -1,0 +1,248 @@
+---
+title: "RPEP significance testing"
+author: "Milena"
+date: "23-3-2022"
+output: html_document
+---
+
+```{r}
+# STEP 1: load packages and data
+rm(list=ls()) # clear the working directory
+library (reshape) # load library
+library (ez) # load library
+library (Hmisc) # required for %nin%
+library (ggplot2)
+library(doBy)
+library(reshape2)
+library(tidyverse)
+# load the data
+load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata") 
+load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions.Rdata") 
+```
+
+
+```{r}
+# STEP 2: Prepare the data, adjust the choice value & create melted object variables
+
+# melt the data
+input.melt <- melt(input, 
+                   id.var = c('participant', 'outPrev', 'condition', 'manipulation','gender'), 
+                   measure.vars = c('startRT','choiceRT'))
+input.melt$condition <- factor(input.melt$condition) 
+```
+
+\section{Distribution of the start RT and choiceRT}
+
+```{r}
+#startRT distribution 
+plot <- ggplot(input,aes(x=trial_number, y=startRT)) + 
+  stat_summary(fun = mean, geom = "point") 
+## this shows that in the first 15 trials of the experiment the participants are faster to respond
+# -> this happens to be a loss sequence -> is it because of the losses they are faster - or because it is the beginning and they have lots of energy still - or a combination?
+# if there is a higher RT in the loss condition it might be because of this first sequence
+# RT fluctuates -> is this related to the condition
+# need to change the x axis values to see this better
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT distribution.png", 
+       plot = plot, 
+       device = "png",
+       width = 150, 
+       height = 150, 
+       dpi = 600,
+       units = "mm")
+
+
+#choiceRT distribution
+plot <- ggplot(input,aes(x=trial_number, y=choiceRT)) + 
+  stat_summary(fun = mean, geom = "point")
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT distribution.png", 
+       plot = plot, 
+       device = "png",
+       width = 150, 
+       height = 150, 
+       dpi = 600,
+       units = "mm")
+```
+
+1) Analysis of the start RT
+
+```{r}
+# testing the significance with the predictors condition, manipulation and previous outcome
+start.cast <- cast(input.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "startRT")
+names(start.cast)[5] <- "startRT"
+
+# first: plot it
+# plot the interaction between previous outcome and start RT
+plot <- ggplot(start.cast,aes(x=outPrev, y=startRT)) + 
+  stat_summary(fun = mean, geom = "point") +
+  stat_summary(fun = mean, geom = "line", aes(group = 1)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10)
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev.png", 
+       plot = plot, 
+       device = "png",
+       width = 150, 
+       height = 150, 
+       dpi = 600,
+       units = "mm")
+# w/ condition
+plot <- ggplot(start.cast, aes(y = startRT, x = outPrev, fill = condition)) +
+  geom_boxplot()+
+  theme_minimal() 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x condition.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+# w/ manipulation
+plot <- ggplot(start.cast, aes(y = startRT, x = outPrev, fill = manipulation)) +
+  geom_boxplot()+
+  theme_minimal() 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x manipulation.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+
+
+output <- ezANOVA(
+  data = start.cast
+  , dv = .(startRT) # the column in data w/ the dependent variable
+  , wid = .(participant) # the column w/ the identifier
+  , within = .(outPrev, condition) # within-subj. variable
+  , between = .(manipulation) # between-subj. variable
+  , observed = .(manipulation) # this variable was observed, not manipulated
+  , detailed = T
+)
+
+output
+
+# the effect of previous outcome is significant: startRT is faster after a loss 
+# F(1,97) = 76.39324792, with p = 7.004648e-14	 which is < 0.05
+
+# the effect of condition is significant -> participants were faster in the RANDOM condition?!
+# F(1,97) = 30.05384660, with p = 3.329072e-07 which is < 0.05
+
+# the interaction between condition and previous outcome is not significant -> the start reaction time given the previous outcome does not depend on the condition
+```
+
+```{r}
+# another way (but not sure whether this is legit)
+
+# plot it
+plot <- ggplot(corr_conditions, aes(y = diffWL, x = condition, fill = manipulation)) +
+  geom_boxplot()+
+  theme_minimal() 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x manipulation 2.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+
+
+output <- ezANOVA(
+  data = corr_conditions
+  , dv = .(diffWL) # the column in data w/ the dependent variable
+  , wid = .(participant) # the column w/ the identifier
+  , within = .(condition) # within-subj. variable
+  , between = .(manipulation) # between-subj. variable
+  , observed = .(manipulation) # this variable was observed, not manipulated
+  , detailed = T
+)
+
+output
+
+# nothing significant -> the condition is no longer significant 
+# however a trend is visible on the boxplot: the PLS seems to be (a bit) stronger for those that answered "yes" 
+```
+
+```{r}
+source("pairwise_comparisons.R") 
+start.pc <- dcast(start.cast, participant ~ outPrev,  mean, value.var = 'startRT') # long to wide
+pc1 <- TES(start.pc$"-5", start.pc$"+5", paired = TRUE)
+output <- rbind(pc1)
+row.names(output) <- c('Loss vs Win')
+output
+
+# not sure whether I've done this correctly
+# and not sure what the output means
+# confidence interval (for the difference in startRT between loss and win): [-109.804; -69.104]
+# gav = Hedges' g = 0.506 ~ a medium effect 
+```
+2) Analysis of the choice RT}
+-> Does the outcome of the previous trial influence choice latencies?}
+
+```{r}
+# the same process but taking condition and manipulation into account
+choice.cast <- cast(input.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "choiceRT")
+names(choice.cast)[5] <- "choiceRT"
+
+# plot the data 
+plot<- ggplot(choice.cast,aes(x=outPrev, y=choiceRT)) + 
+  stat_summary(fun.y = mean, geom = "point") +
+  stat_summary(fun.y = mean, geom = "line", aes(group = 1)) + 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10)
+
+plot + theme(axis.text.x  = element_text(size=12),
+             axis.text.y  = element_text(size=12),
+             axis.title.x  = element_text(size=14),
+             axis.title.y  = element_text(size=14)) + coord_cartesian(ylim = c(400,800)) + theme_bw()
+
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+
+
+# show the means and SD
+summaryBy(choiceRT ~ outPrev, data=as.data.frame(choice.cast),  FUN=c(mean,sd))
+
+# plot it for condition
+plot <- ggplot(choice.cast, aes(y = choiceRT, x = outPrev, fill = condition)) +
+  geom_boxplot()+
+  theme_minimal() 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev x condition.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+
+# plot it for manipulation
+plot <- ggplot(choice.cast, aes(y = choiceRT, x = outPrev, fill = manipulation)) +
+  geom_boxplot()+
+  theme_minimal() 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev x manipulation.png", 
+        plot = plot, 
+        device = "png",
+        width = 150, 
+        height = 150, 
+        dpi = 600,
+        units = "mm")
+
+
+output <- ezANOVA(
+  data = choice.cast
+  , dv = .(choiceRT) # the column in data w/ the dependent variable
+  , wid = .(participant) # the column w/ the identifier
+  , within = .(outPrev, condition) # within-subj. variable
+  , between = .(manipulation) # between-subj. variable
+  , observed = .(manipulation) # this variable was observed, not manipulated
+  , detailed = T
+)
+
+output
+
+# significant effect of previous outcome on the choiceRT
+# significant effect of condition on the choiceRT -> again, faster in the random sequence
+# Maybe: in the loss sequence the participants think they have control (because of the belief in the gambler's fallacy) => slow down to think to make the "correct" decision? 
+```
+

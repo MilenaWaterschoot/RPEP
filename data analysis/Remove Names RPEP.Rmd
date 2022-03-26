@@ -1,0 +1,59 @@
+---
+title: "Removing_Names_RPEP"
+author: "Milena"
+date: "11-3-2022"
+output: html_document
+---
+
+```{r}
+rm(list=ls()) # clear the working directory
+library(data.table)
+library(Hmisc) #required for %nin% --> can also use ! %in%
+
+library(tidyverse)
+library(patchwork)
+
+# --- STEP: open the data files ---
+UPPS <- data.frame()
+input <- data.frame()
+
+
+files <- dir(path = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP experiment\\originele data", pattern = "RPEP_data_", full.names = TRUE) # TODO: fill in file names and directory; double _ so that it detects underscore
+
+## Read in the files in different data frames
+for (i in files) {
+  tmp <- read.csv (i, header = FALSE, stringsAsFactors = FALSE) #read the file
+  #this is needed to replace the prolific_ID with a random number - we only need this once
+  # add subjectID
+  subj <- which(files == i)
+  tmp$V1 <- subj + 50 # TODO: change to the column name with the names -- is subject ID or prolific ID or what? Do that for all prolific_ID in the entire document
+  
+   # change the names of the columns
+  setnames(tmp, c("V1","V2","V3","V4","V5","V6","V7","V8","V9","V10"), 
+                c("subjectID","age","gender","outcome","startKey","startRT","choiceKey","choiceRT",
+                  "manipulation","trial_number"))
+  
+  #add the content to the data frame
+  input <- rbind (input, tmp)
+  write.csv(tmp, file = paste("C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP experiment\\RPEP_data_",subj + 50, ".csv", sep = "")) #TODO: fill in the directory where it should be stored and the filename  we needed this to delete the prolific ID from the raw data sets
+  
+ 
+  
+  # UPPS_tmp <- tmp %>%
+  #   # filter(trial_type == 'survey-likert' ) %>% ##only needed for the datsets with UPPSP
+  #   select(prolific_ID:time_elapsed)
+# 
+#   input_tmp <- tmp %>%
+#     filter(trial_type == "task") %>%
+#     select(prolific_ID:time_elapsed)
+#   
+  
+  #add the content to the data frame
+  # UPPS <- rbind(UPPS, UPPS_tmp)
+  # input <- rbind(input, input_tmp)
+
+  # rm(tmp, input_tmp, UPPS_tmp) #remove the temporary data frames
+  
+}
+```
+
