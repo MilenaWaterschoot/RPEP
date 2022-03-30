@@ -36,12 +36,12 @@ input.melt$condition <- factor(input.melt$condition)
 ```{r}
 #startRT distribution 
 plot <- ggplot(input,aes(x=trial_number, y=startRT)) + 
-  stat_summary(fun = mean, geom = "point") 
-## this shows that in the first 15 trials of the experiment the participants are faster to respond
-# -> this happens to be a loss sequence -> is it because of the losses they are faster - or because it is the beginning and they have lots of energy still - or a combination?
-# if there is a higher RT in the loss condition it might be because of this first sequence
-# RT fluctuates -> is this related to the condition
-# need to change the x axis values to see this better
+  stat_summary(fun = mean, geom = "point") +
+  scale_x_continuous(breaks  = c(18,33,48,63,78,93,108))
+## this shows that in the first 15 trials of the experiment the participants are slower to respond
+# -> this happens to be a loss sequence -> is it because of the losses they are slower - or because it is the beginning and they are still getting to know the game/ are still thinking a lot about which option to choose - or a combination?
+# if there is a lower RT in the loss condition it might be because of this first sequence
+# can I do the analysis again without the first block?
 ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT distribution.png", 
        plot = plot, 
        device = "png",
