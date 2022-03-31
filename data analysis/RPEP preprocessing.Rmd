@@ -14,13 +14,13 @@ library(tidyverse)
 
 ```{r}
 # --- STEP 1: create a dataframe ---
-setwd( "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\data")
+setwd( "data")
 input <- data.frame()
-files <- dir(pattern = "RPEP_data_") #files; double _ so that it detects underscore
+files <- dir(path = "data", pattern = "RPEP_data__*", full.names = TRUE) #files; double _ so that it detects underscore
 
 for (i in files) {
   tmp <- read.csv (i, header = TRUE) #read the file
-  tmp <- tmp[tmp$X<=125, ]
+  tmp <- tmp[tmp$X<=125, ]## CE: what does this mean?
 
   #add the content to the data frame
   input <- rbind (input, tmp)
@@ -50,20 +50,13 @@ input$outPrev <- lag(input$outcome)
 ## and make it a factor
 input$outPrev <- factor(input$outPrev)
 # defining the start reaction time of the previous trial
-input$startPrev <- lag(input$startRT) # Start RT of trial n-1
+input$startPrev <- lag(input$startRT) # Start RT of trial n-1 # CE: these are leftovers from Frederick's old script, you don't need these.
 ## and make it numeric
 input$startPrev <- as.numeric(input$startPrev)
 # calculating the difference between the RT of the current trial and the previous trial
 input$startDiff <- input$startRT - input$startPrev
 ## and make it numeric
 input$startDiff <- as.numeric(input$startDiff)
-
-```
-
-```{r}
-# check overall if design worked
-#table(input$participant, input$outcome) # this shows for each participant how many -5 outcomes there were and how many +5 (and how many undefined (i.e., 2))
-#table(input$participant, input$choiceRT) # I don't understand this table
 
 ```
 
@@ -106,7 +99,7 @@ input$condition[input$trial_number >=109 & input$trial_number <=123] <- "Random_
 
 ```{r}
 # STEP 4: exclusion
-# this subject might need to be excluded: is missing a trial
+# this subject might need to be excluded: is missing a trial ##CE: one trial? I think we can keep this one ;)
 subject_excl <- c(66)
 input <- subset(input, participant %nin% subject_excl)
 ```
@@ -126,7 +119,7 @@ input <- subset(input, trial_number != 64)
 input <- subset(input, trial_number != 94)
 # need to remove the practice trials: 1, 2, 3
 # need to remove the first trials of every block: 4, 34, 64, 94
-# do I also need to remove the first trial of the random sequence? i.e., 19, 49, 79, 109
+# do I also need to remove the first trial of the random sequence? i.e., 19, 49, 79, 109 ##CE: no, I don't think so
 input <- subset(input, outPrev != 'undefined')
 after <- nrow(input)
 removed <- 1 - (after/before)
@@ -143,6 +136,6 @@ input$trial_number <- as.numeric(input$trial_number)
 # --- STEP 5:  write everything to a file ---
 input$participant <- droplevels(input$participant) # drop unused levels factor
 input$outPrev <- droplevels(input$outPrev) # drop unused levels factor
-save(input, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata")
+save(input, file = "dataframe input.Rdata")
 ```
 

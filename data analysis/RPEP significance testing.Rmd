@@ -16,8 +16,8 @@ library(doBy)
 library(reshape2)
 library(tidyverse)
 # load the data
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata") 
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions.Rdata") 
+load(file = "dataframe input.Rdata") 
+load(file = "corr_conditions.Rdata") 
 ```
 
 
@@ -76,6 +76,8 @@ plot <- ggplot(start.cast,aes(x=outPrev, y=startRT)) +
   stat_summary(fun = mean, geom = "point") +
   stat_summary(fun = mean, geom = "line", aes(group = 1)) + 
   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10)
+plot
+
 ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev.png", 
        plot = plot, 
        device = "png",
@@ -87,6 +89,8 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 plot <- ggplot(start.cast, aes(y = startRT, x = outPrev, fill = condition)) +
   geom_boxplot()+
   theme_minimal() 
+
+plot
 ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x condition.png", 
         plot = plot, 
         device = "png",
@@ -135,6 +139,8 @@ output
 plot <- ggplot(corr_conditions, aes(y = diffWL, x = condition, fill = manipulation)) +
   geom_boxplot()+
   theme_minimal() 
+
+plot
 ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x manipulation 2.png", 
         plot = plot, 
         device = "png",

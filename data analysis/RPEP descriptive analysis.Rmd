@@ -13,18 +13,20 @@ library (Hmisc) # required for %nin%
 library (ggplot2)
 library(doBy)
 library(reshape2)
+library(tidyverse)
 ```
 
 ```{r}
 # STEP 1: load the data
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata") 
+load(file = "dataframe input.Rdata") 
 ```
 
 ```{r}
 # STEP 2: melt the behavioral data for visualization purposes
 input.melt <- melt(input, 
                    id.var = c('participant','outPrev','gender','manipulation','trial_number','condition'), 
-                   measure.vars = c('startRT')) # ? it's weird that it are two columns
+                   measure.vars ='startRT') # ? it's weird that it are two columns ## CE: that is the melt function. 
+
 
 input.melt$outPrev <- factor(input.melt$outPrev) # tell R outPrev is a factor
 
@@ -37,11 +39,28 @@ corr_overall <- cast(input.melt,  participant + gender + manipulation ~ outPrev,
 # taking the two conditions into account
 corr_conditions <- cast(input.melt,  participant + gender + manipulation + condition ~ outPrev, mean, subset = variable == "startRT")
 
+
+ 
 # calculate the difference scores for win vs. loss 
 # (always start with the higher mean to avoid negative diff scores)
 corr_overall$diffWL <- corr_overall$"+5" - corr_overall$"-5"
 corr_conditions$diffWL <- corr_conditions$"+5" - corr_conditions$"-5"
 
+##CE: you can make it a bit easier:
+
+levels(input$outPrev)[levels(input$outPrev)=="+5"] <- "win"
+levels(input$outPrev)[levels(input$outPrev)=="-5"] <- "loss"
+
+ input %>%
+  select(participant, outPrev, startRT, condition, gender, manipulation) %>%
+  group_by(participant, outPrev, condition, gender, manipulation) %>% 
+  summarize(startRT = mean(startRT, na.rm = TRUE)) %>%
+  pivot_wider(names_from = outPrev, values_from = startRT) %>%
+  mutate(win = as.numeric(win),
+         loss = as.numeric(loss)) %>%
+  mutate(diff = win - loss)-> startRT
+
+ ## -end of my suggestion-##
 
 ```
 
@@ -84,6 +103,7 @@ corr_conditions$condition <- factor(as.character(corr_conditions$condition), lev
 ```
 
 ```{r}
+## CE: I would make ggplots with start as Y; win/loss as X and condition as color (see my plots in almost all my studies)
 # STEP 5: make boxplots!
 plot_conditions <- ggplot(corr_conditions, aes(y = diffWL, x = condition)) +
   geom_boxplot()+
