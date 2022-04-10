@@ -1,7 +1,7 @@
 ---
-title: "RPEP analysis"
+title: 'RPEP analysis 2'
 author: "Milena"
-date: "21-3-2022"
+date: "7-4-2022"
 output: html_document
 ---
 
@@ -18,33 +18,33 @@ library(tidyverse)
 
 ```{r}
 # STEP 1: load the data
-load(file = "dataframe input.Rdata") 
+load(file = "dataframe input 2.Rdata") 
 ```
 
 ```{r}
 # STEP 2: melt the behavioral data for visualization purposes
-input.melt <- melt(input, 
-                   id.var = c('participant','outPrev','gender','age','manipulation','trial_number','condition'), 
+input2.melt <- melt(input_2, 
+                   id.var = c('participant','outPrev','gender','manipulation','trial_number','condition'), 
                    measure.vars ='startRT') 
 
 
-input.melt$outPrev <- factor(input.melt$outPrev) # tell R outPrev is a factor
+input2.melt$outPrev <- factor(input2.melt$outPrev) # tell R outPrev is a factor
 
 ```
 
 ```{r}
 # STEP 3: create a dataframe with the mean startRT after loss and win fpr each participant
 # over the two conditions
-corr_overall <- cast(input.melt,  participant + gender + age + manipulation ~ outPrev, mean, subset = variable == "startRT")
+corr_overall2 <- cast(input2.melt,  participant + gender + manipulation ~ outPrev, mean, subset = variable == "startRT")
 # taking the two conditions into account
-corr_conditions <- cast(input.melt,  participant + gender + manipulation + condition ~ outPrev, mean, subset = variable == "startRT")
+corr_conditions2 <- cast(input2.melt,  participant + gender + manipulation + condition ~ outPrev, mean, subset = variable == "startRT")
 
 
  
 # calculate the difference scores for win vs. loss 
 # (always start with the higher mean to avoid negative diff scores)
-corr_overall$diffWL <- corr_overall$"+5" - corr_overall$"-5"
-corr_conditions$diffWL <- corr_conditions$"+5" - corr_conditions$"-5"
+corr_overall2$diffWL <- corr_overall2$"+5" - corr_overall2$"-5"
+corr_conditions2$diffWL <- corr_conditions2$"+5" - corr_conditions2$"-5"
 
 ##CE: you can make it a bit easier:
 
@@ -69,43 +69,43 @@ corr_conditions$diffWL <- corr_conditions$"+5" - corr_conditions$"-5"
 ## the means
 # the mean for each condition
 dcast(. ~ condition, 
-      data = corr_conditions, mean, value.var = "diffWL")
+      data = corr_conditions2, mean, value.var = "diffWL")
 # the mean for condition x manipulation
 dcast(condition ~ manipulation, 
-      data = corr_conditions, mean, value.var = "diffWL")
+      data = corr_conditions2, mean, value.var = "diffWL")
 # the mean for condition x gender
 dcast(condition ~ gender, 
-      data = corr_conditions, mean, value.var = "diffWL")
+      data = corr_conditions2, mean, value.var = "diffWL")
 # the mean for condition x manipulation x gender
 dcast(condition ~ manipulation + gender, 
-      data = corr_conditions, mean, value.var = "diffWL")
+      data = corr_conditions2, mean, value.var = "diffWL")
 
 ## the sds
 # the sd for each condition
 dcast(. ~ condition, 
-      data = corr_conditions, sd, value.var = "diffWL")
+      data = corr_conditions2, sd, value.var = "diffWL")
 # the sd for condition x manipulation
 dcast(condition ~ manipulation, 
-      data = corr_conditions, sd, value.var = "diffWL")
+      data = corr_conditions2, sd, value.var = "diffWL")
 # the sd for condition x gender
 dcast(condition ~ gender, 
-      data = corr_conditions, sd, value.var = "diffWL")
+      data = corr_conditions2, sd, value.var = "diffWL")
 # the sd for condition x manipulation x gender
 dcast(condition ~ manipulation + gender, 
-      data = corr_conditions, sd, value.var = "diffWL")
+      data = corr_conditions2, sd, value.var = "diffWL")
 
 ```
 
 ```{r}
 # this is to make the correct labels for the boxplots
-corr_conditions$condition <- factor(as.character(corr_conditions$condition), levels = c("Loss_Seq", "Random_Seq"), labels = c("Loss sequence", "Random sequence"))
+corr_conditions2$condition <- factor(as.character(corr_conditions2$condition), levels = c("Loss_Seq", "Random_Seq"), labels = c("Loss sequence", "Random sequence"))
 
 ```
 
 ```{r}
 ## CE: I would make ggplots with start as Y; win/loss as X and condition as color (see my plots in almost all my studies)
 # STEP 5: make boxplots!
-plot_conditions <- ggplot(corr_conditions, aes(y = diffWL, x = condition)) +
+plot_conditions <- ggplot(corr_conditions2, aes(y = diffWL, x = condition)) +
   geom_boxplot()+
   geom_hline(yintercept=0, linetype="dashed", color = "red") +
   coord_cartesian(ylim = c(-200, 400)) + 
@@ -114,7 +114,7 @@ plot_conditions <- ggplot(corr_conditions, aes(y = diffWL, x = condition)) +
   ylab("Post-lost speeding effect in ms") + 
   xlab("Condition") 
 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\boxplot conditions.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\boxplot conditions.png", 
        plot = plot_conditions, 
        device = "png",
        width = 150, 
@@ -122,7 +122,7 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
        dpi = 600,
        units = "mm")
 
-plot_conditions_manipulation <- ggplot(corr_conditions, aes(y = diffWL, x = condition, fill = manipulation)) +
+plot_conditions_manipulation <- ggplot(corr_conditions2, aes(y = diffWL, x = condition, fill = manipulation)) +
   geom_boxplot()+
   geom_hline(yintercept=0, linetype="dashed", color = "red") +
   coord_cartesian(ylim = c(-200, 400)) + 
@@ -132,7 +132,7 @@ plot_conditions_manipulation <- ggplot(corr_conditions, aes(y = diffWL, x = cond
   xlab("Condition") +
   guides(fill=guide_legend(title="Yes/no statement"))
 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\boxplot conditions x manipulation.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\boxplot conditions x manipulation.png", 
        plot = plot_conditions_manipulation, 
        device = "png",
        width = 150, 
@@ -140,7 +140,7 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
        dpi = 600,
        units = "mm")
 
-plot_conditions_gender <- ggplot(corr_conditions, aes(y = diffWL, x = condition, fill = gender)) +
+plot_conditions_gender <- ggplot(corr_conditions2, aes(y = diffWL, x = condition, fill = gender)) +
   geom_boxplot()+
   geom_hline(yintercept=0, linetype="dashed", color = "red") +
   coord_cartesian(ylim = c(-200, 400)) + 
@@ -150,7 +150,7 @@ plot_conditions_gender <- ggplot(corr_conditions, aes(y = diffWL, x = condition,
   xlab("Gender") +
   guides(fill=guide_legend(title="Gender"))
 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\boxplot conditions x gender.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\boxplot conditions x gender.png", 
        plot = plot_conditions_gender, 
        device = "png",
        width = 150, 
@@ -161,17 +161,8 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 ```
 
 ```{r}
-# the mean RT and sd of losses and wins
-mean(corr_overall$`+5`)
-mean(corr_overall$`-5`)
-sd(corr_overall$`+5`)
-sd(corr_overall$`-5`)
-
-```
-
-
-```{r}
 # save the dataframes
-save(corr_conditions, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions.Rdata")
-save(corr_overall, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_overall.Rdata")
+save(corr_conditions2, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions2.Rdata")
+save(corr_overall2, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_overall2.Rdata")
 ```
+

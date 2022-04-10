@@ -1,0 +1,62 @@
+---
+title: "RPEP without block 1"
+author: "Milena"
+date: "1-4-2022"
+output: html_document
+---
+
+```{r}
+rm(list=ls()) # clear the working directory
+library (reshape) # load library
+library (ez) # load library
+library (Hmisc) # required for %nin%
+library (ggplot2)
+library(doBy)
+library(reshape2)
+library(tidyverse)
+```
+
+```{r}
+# STEP 1: load the data
+load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata") 
+```
+
+```{r}
+# STEP 2: remove the first block (trials >= 33 )
+input_2 <- input
+input_2 <- subset(input_2, trial_number != 5) 
+input_2 <- subset(input_2, trial_number != 6) 
+input_2 <- subset(input_2, trial_number != 7) 
+input_2 <- subset(input_2, trial_number != 8) 
+input_2 <- subset(input_2, trial_number != 9) 
+input_2 <- subset(input_2, trial_number != 10) 
+input_2 <- subset(input_2, trial_number != 11) 
+input_2 <- subset(input_2, trial_number != 12) 
+input_2 <- subset(input_2, trial_number != 13) 
+input_2 <- subset(input_2, trial_number != 14) 
+input_2 <- subset(input_2, trial_number != 15) 
+input_2 <- subset(input_2, trial_number != 16) 
+input_2 <- subset(input_2, trial_number != 17) 
+input_2 <- subset(input_2, trial_number != 18) 
+input_2 <- subset(input_2, trial_number != 19) 
+input_2 <- subset(input_2, trial_number != 20) 
+input_2 <- subset(input_2, trial_number != 21) 
+input_2 <- subset(input_2, trial_number != 22) 
+input_2 <- subset(input_2, trial_number != 23) 
+input_2 <- subset(input_2, trial_number != 24) 
+input_2 <- subset(input_2, trial_number != 25) 
+input_2 <- subset(input_2, trial_number != 26) 
+input_2 <- subset(input_2, trial_number != 27)
+input_2 <- subset(input_2, trial_number != 28) 
+input_2 <- subset(input_2, trial_number != 29) 
+input_2 <- subset(input_2, trial_number != 30) 
+input_2 <- subset(input_2, trial_number != 31) 
+input_2 <- subset(input_2, trial_number != 32) 
+input_2 <- subset(input_2, trial_number != 33) 
+```
+
+```{r}
+# save the dataframes
+save(input_2, file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input 2.Rdata")
+```
+

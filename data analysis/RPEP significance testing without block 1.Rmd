@@ -1,7 +1,7 @@
 ---
-title: "RPEP significance testing"
+title: 'RPEP significance testing 2'
 author: "Milena"
-date: "23-3-2022"
+date: "7-4-2022"
 output: html_document
 ---
 
@@ -15,13 +15,9 @@ library (ggplot2)
 library(doBy)
 library(reshape2)
 library(tidyverse)
-library(ggpubr)
-library(writexl)
 # load the data
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input.Rdata") 
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions.Rdata") 
-load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_overall.Rdata") 
-
+load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\dataframe input 2.Rdata") 
+load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\corr_conditions2.Rdata") 
 ```
 
 
@@ -29,28 +25,26 @@ load(file = "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data an
 # STEP 2: Prepare the data, adjust the choice value & create melted object variables
 
 # melt the data
-input.melt <- melt(input, 
+input2.melt <- melt(input_2, 
                    id.var = c('participant', 'outPrev', 'condition', 'manipulation','gender'), 
                    measure.vars = c('startRT','choiceRT'))
-input.melt$condition <- factor(input.melt$condition) 
+input2.melt$condition <- factor(input2.melt$condition) 
 ```
+
 
 \section{Distribution of the start RT and choiceRT}
 
 ```{r}
 #startRT distribution 
-plot3 <- ggplot(input,aes(x=trial_number, y=startRT)) + 
+plot <- ggplot(input_2,aes(x=trial_number, y=startRT)) + 
   stat_summary(fun = mean, geom = "point") +
-  scale_x_continuous(breaks  = c(18,33,48,63,78,93,108)) +
-  ylab("Initialization speed") + 
-  xlab("Trial number") +
-  theme(axis.title = element_text(size = 16), axis.text = element_text(size = 16)) 
+  scale_x_continuous(breaks  = c(18,33,48,63,78,93,108))
 ## this shows that in the first 15 trials of the experiment the participants are slower to respond
 # -> this happens to be a loss sequence -> is it because of the losses they are slower - or because it is the beginning and they are still getting to know the game/ are still thinking a lot about which option to choose - or a combination?
 # if there is a lower RT in the loss condition it might be because of this first sequence
 # can I do the analysis again without the first block?
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT distribution.png", 
-       plot = plot3, 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\startRT\\startRT distribution.png", 
+       plot = plot, 
        device = "png",
        width = 150, 
        height = 150, 
@@ -59,13 +53,10 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 
 
 #choiceRT distribution
-plot4 <- ggplot(input,aes(x=trial_number, y=choiceRT)) + 
-  stat_summary(fun = mean, geom = "point") +
-  ylab("Choice RT") + 
-  xlab("Trial number") +
-  theme(axis.title = element_text(size = 16), axis.text = element_text(size = 16)) 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT distribution.png", 
-       plot = plot4, 
+plot <- ggplot(input_2,aes(x=trial_number, y=choiceRT)) + 
+  stat_summary(fun = mean, geom = "point")
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\choiceRT\\choiceRT distribution.png", 
+       plot = plot, 
        device = "png",
        width = 150, 
        height = 150, 
@@ -77,26 +68,17 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 
 ```{r}
 # testing the significance with the predictors condition, manipulation and previous outcome
-start.cast <- cast(input.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "startRT")
+start.cast <- cast(input2.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "startRT")
 names(start.cast)[5] <- "startRT"
-
-
-# show the means and SD
-summaryBy(startRT ~ outPrev, data=as.data.frame(start.cast),  FUN=c(mean,sd))
 
 # first: plot it
 # plot the interaction between previous outcome and start RT
-plot1 <- ggplot(start.cast,aes(x=outPrev, y=startRT)) + 
+plot <- ggplot(start.cast,aes(x=outPrev, y=startRT)) + 
   stat_summary(fun = mean, geom = "point") +
   stat_summary(fun = mean, geom = "line", aes(group = 1)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10) +
-  ylab("Initialization speed (in ms)") + 
-  xlab("Previous outcome") +
-  theme(axis.title = element_text(size = 18), axis.text = element_text(size = 18))  +
-    scale_x_discrete(breaks=c("-5","+5"),
-        labels=c("Loss", "Win"))
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev.png", 
-       plot = plot1, 
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10)
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\startRT\\startRT x outPrev.png", 
+       plot = plot, 
        device = "png",
        width = 150, 
        height = 150, 
@@ -106,7 +88,7 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 plot <- ggplot(start.cast, aes(y = startRT, x = outPrev, fill = condition)) +
   geom_boxplot()+
   theme_minimal() 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x condition.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\startRT\\startRT x outPrev x condition.png", 
         plot = plot, 
         device = "png",
         width = 150, 
@@ -117,7 +99,7 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 plot <- ggplot(start.cast, aes(y = startRT, x = outPrev, fill = manipulation)) +
   geom_boxplot()+
   theme_minimal() 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\startRT\\startRT x outPrev x manipulation.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\startRT\\startRT x outPrev x manipulation.png", 
         plot = plot, 
         device = "png",
         width = 150, 
@@ -139,10 +121,9 @@ output1 <- ezANOVA(
 output1
 
 # the effect of previous outcome is significant: startRT is faster after a loss 
-# F(1,97) = , with p = -14	 which is < 0.05
+# F(1,97) = 76.39324792, with p = 7.004648e-14	 which is < 0.05
 
-# the effect of condition is significant -> participants were faster in the RANDOM condition?!
-# F(1,97) = , with p =  which is < 0.05
+# the effect of condition is no longer significant!
 
 # the interaction between condition and previous outcome is not significant -> the start reaction time given the previous outcome does not depend on the condition
 ```
@@ -157,14 +138,10 @@ output2 <- ezANOVA(
 
 output2
 
-write_xlsx(output2,"C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\outPrev + condition.xlsx")
-
 # same conclusions
 # these are the one I report!
 # -> conclusions don't change when integrating manipulation
 # however: not enough participants
-
-# PLS: F(1,99) = 7.853996e+01 with p = 3.301029e-14 which is smaller than 0.05
 ```
 
 ```{r}
@@ -209,36 +186,30 @@ output
 
 # not sure whether I've done this correctly
 # and not sure what the output means
-# confidence interval (for the difference in startRT between loss and win): [-110,421; -70,021]
-# gav = Hedges' g = 0.511 ~ a medium effect 
+# confidence interval (for the difference in startRT between loss and win): [-109.804; -69.104]
+# gav = Hedges' g = 0.506 ~ a medium effect 
 ```
 2) Analysis of the choice RT}
 -> Does the outcome of the previous trial influence choice latencies?}
 
 ```{r}
 # the same process but with choiceRT
-choice.cast <- cast(input.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "choiceRT")
+choice.cast <- cast(input2.melt, participant + condition + manipulation + outPrev ~ ., mean, subset = variable == "choiceRT")
 names(choice.cast)[5] <- "choiceRT"
 
 # plot the data 
-plot2<- ggplot(choice.cast,aes(x=outPrev, y=choiceRT)) + 
+plot<- ggplot(choice.cast,aes(x=outPrev, y=choiceRT)) + 
   stat_summary(fun.y = mean, geom = "point") +
   stat_summary(fun.y = mean, geom = "line", aes(group = 1)) + 
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10) +
-  ylab("Choice reaction time (in ms)") + 
-  xlab("Previous outcome") +
-  theme(axis.title = element_text(size = 18), axis.text = element_text(size = 18)) +
-  scale_x_discrete(breaks=c("-5","+5"),
-        labels=c("Loss", "Win"))
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0.10)
 
+plot + theme(axis.text.x  = element_text(size=12),
+             axis.text.y  = element_text(size=12),
+             axis.title.x  = element_text(size=14),
+             axis.title.y  = element_text(size=14)) + coord_cartesian(ylim = c(400,800)) + theme_bw()
 
-# plot + theme(axis.text.x  = element_text(size=12),
-#              axis.text.y  = element_text(size=12),
-#              axis.title.x  = element_text(size=14),
-#              axis.title.y  = element_text(size=14)) + coord_cartesian(ylim = c(400,800)) + theme_bw()
-
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev.png", 
-        plot = plot2, 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\choiceRT\\choiceRT x outPrev.png", 
+        plot = plot, 
         device = "png",
         width = 150, 
         height = 150, 
@@ -253,7 +224,7 @@ summaryBy(choiceRT ~ outPrev, data=as.data.frame(choice.cast),  FUN=c(mean,sd))
 plot <- ggplot(choice.cast, aes(y = choiceRT, x = outPrev, fill = condition)) +
   geom_boxplot()+
   theme_minimal() 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev x condition.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\choiceRT\\choiceRT x outPrev x condition.png", 
         plot = plot, 
         device = "png",
         width = 150, 
@@ -265,7 +236,7 @@ ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP dat
 plot <- ggplot(choice.cast, aes(y = choiceRT, x = outPrev, fill = manipulation)) +
   geom_boxplot()+
   theme_minimal() 
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\choiceRT\\choiceRT x outPrev x manipulation.png", 
+ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output_2\\choiceRT\\choiceRT x outPrev x manipulation.png", 
         plot = plot, 
         device = "png",
         width = 150, 
@@ -287,8 +258,7 @@ output1 <- ezANOVA(
 output1
 
 # significant effect of previous outcome on the choiceRT
-# significant effect of condition on the choiceRT -> again, faster in the random sequence
-# Maybe: in the loss sequence the participants think they have control (because of the belief in the gambler's fallacy) => slow down to think to make the "correct" decision? 
+# NO significant effect of condition on the choiceRT 
 ```
 ```{r}
 output2 <- ezANOVA(
@@ -302,44 +272,6 @@ output2 <- ezANOVA(
 output2
 
 # significant effect of previous outcome on the choiceRT
-# significant effect of condition on the choiceRT -> again, faster in the random sequence
-# Maybe: in the loss sequence the participants think they have control (because of the belief in the gambler's fallacy) => slow down to think to make the "correct" decision? 
-```
-
-```{r}
-source("pairwise_comparisons.R") 
-start.pc <- dcast(start.cast, participant ~ outPrev,  mean, value.var = 'startRT') # long to wide
-pc1 <- TES(start.pc$"-5", start.pc$"+5", paired = TRUE)
-choice.pc <- dcast(choice.cast, participant ~ outPrev,  mean, value.var = 'choiceRT') # long to wide
-pc2 <- TES(choice.pc$"-5", choice.pc$"+5", paired = TRUE)
-output <- rbind(pc1,pc2)
-row.names(output) <- c('Loss vs Win - Choice reaction time', 'Loss vs Win - Initialization speed')
-output
-
-write_xlsx(output,"C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\pairwise comparisons.xlsx")
-
-# difference between the two means: -72.118
-# confidence interval (for the difference in choiceRT between loss and win): [-91.722; -52.514]
-# gav = Hedges' g = 0.292 ~ a small effect 
-```
-```{r}
-# to paste  two plots together
-plot <- ggarrange(plot1, plot2, nrow = 1)
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\PLS start and choice RT.png", 
-        plot = plot, 
-        device = "png",
-        width = 300, 
-        height = 150, 
-        dpi = 600,
-        units = "mm")
-
-plot <- ggarrange(plot3, plot4, nrow = 1)
-ggsave(filename="C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\output\\Distribution start and choice RT.png", 
-        plot = plot, 
-        device = "png",
-        width = 300, 
-        height = 150, 
-        dpi = 600,
-        units = "mm")
+# NO significant effect of condition on the choiceRT 
 ```
 

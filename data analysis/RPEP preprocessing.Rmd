@@ -14,13 +14,13 @@ library(tidyverse)
 
 ```{r}
 # --- STEP 1: create a dataframe ---
-setwd( "data")
+setwd( "C:\\Users\\milen\\Dropbox\\Universiteit\\MASTER\\RPEP\\RPEP data analysis\\data")
 input <- data.frame()
-files <- dir(path = "data", pattern = "RPEP_data__*", full.names = TRUE) #files; double _ so that it detects underscore
+files <- dir(pattern = "RPEP_data_")
 
 for (i in files) {
   tmp <- read.csv (i, header = TRUE) #read the file
-  tmp <- tmp[tmp$X<=125, ]## CE: what does this mean?
+  tmp <- tmp[tmp$X<=125, ]# some participants filled in the experiment twice. We only need to first run i.e. the first 125 row
 
   #add the content to the data frame
   input <- rbind (input, tmp)
@@ -50,7 +50,7 @@ input$outPrev <- lag(input$outcome)
 ## and make it a factor
 input$outPrev <- factor(input$outPrev)
 # defining the start reaction time of the previous trial
-input$startPrev <- lag(input$startRT) # Start RT of trial n-1 # CE: these are leftovers from Frederick's old script, you don't need these.
+input$startPrev <- lag(input$startRT)
 ## and make it numeric
 input$startPrev <- as.numeric(input$startPrev)
 # calculating the difference between the RT of the current trial and the previous trial
@@ -65,9 +65,7 @@ input$startDiff <- as.numeric(input$startDiff)
 # this is needed otherwise the manipulation question is removed later on
 
 n <- 1
-
 answer <- c(1:100)
-
 for (i in c(1:100)) {
   answer[n] <- as.character(input$manipulation[input$subjectID==i & input$X==125])
   input$manipulation[input$subjectID==i] <- answer[n]
@@ -100,8 +98,8 @@ input$condition[input$trial_number >=109 & input$trial_number <=123] <- "Random_
 ```{r}
 # STEP 4: exclusion
 # this subject might need to be excluded: is missing a trial ##CE: one trial? I think we can keep this one ;)
-subject_excl <- c(66)
-input <- subset(input, participant %nin% subject_excl)
+# subject_excl <- c(66)
+# input <- subset(input, participant %nin% subject_excl)
 ```
 
 
@@ -138,4 +136,3 @@ input$participant <- droplevels(input$participant) # drop unused levels factor
 input$outPrev <- droplevels(input$outPrev) # drop unused levels factor
 save(input, file = "dataframe input.Rdata")
 ```
-
